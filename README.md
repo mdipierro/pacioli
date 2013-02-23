@@ -125,6 +125,10 @@ The output will be in toystore.ledger.output and toystore.balance
     Liabilities:AccountPayable    : 
     Liabilities:Loan              : -9875.0 USD
 
+## More docs?
+
+[Most of the documentation](http://furius.ca/beancount/) about ledger and beancount applies to pacioli.
+
 ## API
 
 Pacioli can be used programmatically:
