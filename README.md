@@ -1,8 +1,8 @@
 ## About
 
-Author: Massimo Di Pierro <mdipierro@cs.depaul.edu>
-License: BSD <http://opensource.org/licenses/BSD-3-Clause>
-Created on: 2013-02-20
+    Author: Massimo Di Pierro <mdipierro@cs.depaul.edu>
+    License: BSD <http://opensource.org/licenses/BSD-3-Clause>
+    Created on: 2013-02-20
 
 This program is named after Luca Pacioli, inventor of accounting and double-entry bookkeeping.
 Pacioli maintained that business people must insist on justice, honour, and truth.
