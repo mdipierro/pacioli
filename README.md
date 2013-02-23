@@ -4,31 +4,35 @@
     License: BSD <http://opensource.org/licenses/BSD-3-Clause>
     Created on: 2013-02-20
 
-This program is named after Luca Pacioli, inventor of accounting and double-entry bookkeeping.
+This program is named after [Luca Pacioli](http://en.wikipedia.org/wiki/Luca_Pacioli) (1445–1517), 
+inventor of accounting and double-entry bookkeeping. 
 Pacioli maintained that business people must insist on justice, honour, and truth.
 
 The program contains three parts:
 
-An implementation of double-entry bookkeeping 
+### An implementation of double-entry bookkeeping 
 - Assets, Liabilities, Equity, Income, Expenses 
-- Computations of Balance Sheet and Profit&Losses
+- Computations of Balance Sheet and Profit/Losses
 - Automatic computation FIFO capital-gains
-- Scenario analysis (WORK IN PROGRESS)
 - API
-Functions to read and write a general ledger in the beancount format (http://furius.ca/beancount/)
+- Scenario analysis (WORK IN PROGRESS)
+
+### Functions to read and write a general ledger in the [beancount format](http://furius.ca/beancount/)
 - list of accounts
 - support for ofx records
 - transactions with multiple postings
 - tags
 - checks
 - support for multiple files and partial output
-Reporting
+
+### Reporting
 - The output of the program is in HTML
-- Reporting in Latex/PDF (WORK IN PROGRESS)
+- Reporting in Latex/PDF (can be improved)
 - Reporting in JSON (WORKM IN PROGRESS)
 - Charting
 
-This program uses a single file to store the ledger. This is only appropriate for small bussinesses.
+This program uses a single file to store the input ledger.
+This is only appropriate for small bussinesses.
 Our benchmark indicates that the program requires 0.0004 seconds/transactions. Therefore if a business processes about 1000 transaction/day, the system can process one year of trasactions in about 2 minutes. Additional time is required to generate reports.
 
 ## !!Attention!!
@@ -128,6 +132,10 @@ The output will be in toystore.ledger.output and toystore.balance
 ## More docs?
 
 [Most of the documentation](http://furius.ca/beancount/) about ledger and beancount applies to pacioli.
+
+## Why?
+
+So why pacioli.py when we have beancount? I mostly made it for myself. I wanted to rewrite beancount from scratch to understand it. The result (pacioli) performs the same functions but it is much smaller (~800 lines of code). I believe pacioli has better API. I have plans to turn it into a web application and integrate it with d3.js. Beancount is GPL. Pacioli is BSD. 
 
 ## API
 
