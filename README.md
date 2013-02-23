@@ -125,6 +125,26 @@ The output will be in toystore.ledger.output and toystore.balance
     Liabilities:AccountPayable    : 
     Liabilities:Loan              : -9875.0 USD
 
+## API
+
+Pacioli can be used programmatically:
+
+    >>> from pacioli import *
+    >>> p = Pacioli()
+    >>> p.add_account('Assets:Cash','De','USD')
+    >>> p.add_account('Equity','Cr','USD')
+    >>> p.ledger.append(Transaction('2008-10-20','info',postings=[
+    ...     Posting('Assets:Cash',amount=Amount(100,'USD')),
+    ...     Posting('Equity')]))
+    >>> p.ledger.sort()
+    >>> p.save('test.ledger')
+    >>> p.run()
+    >>> p.report()
+    >>> p.dump_html('folder')
+    >>> p.dump_latex('folder/report.latex')
+    >>> assert p.accounts['Assets'].wallet['USD'] == +100
+    >>> assert p.accounts['Equity'].wallet['USD'] == -100
+
 ## Web server
 
 Pacioli uses Tornado to serve the genarated documents:
