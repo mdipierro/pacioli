@@ -645,7 +645,8 @@ class Pacioli(object):
             w('</table>')
             w('</div></body></html>')
             stream.close()
-        def dump_html_transaction(filename, header, transactions):
+        def dump_html_transaction(filename, header, transactions,name=None,wallet=None):
+            wallet = copy.copy(wallet)
             stream = open(filename,'w')
             w = lambda s,*args: stream.write(s % args)
             w(HEAD)
@@ -653,12 +654,17 @@ class Pacioli(object):
             w('<a href="index.html">Back to Index</a>')
             w('<h1>%s</h1>', e(str(header)))
             w('<table id="table">')
-            w('<tr><th>Date</th><th>Account</th><th colspan="5">Amount</th><th>Tags</th></tr>')
+            w('<tr><th>Date</th><th>Account</th><th colspan="5">Amount</th><th>Tags</th>')
+            if wallet!=None:
+                w('<th>Balance</th>')
+            w('</tr>')
             for t in transactions:
                 w('<tr class="transaction">')
                 w('<td>%s</td>',link_date(t.date))
                 w('<td colspan="6">%s</td>',e(t.info))
                 w('<td>%s</td>',' '.join(link_tag(tag) for tag in t.tags))
+                if wallet!=None:
+                    w('<td></td>')
                 w('</tr>')
                 for p in t.postings:
                     w('<tr>')
@@ -675,7 +681,13 @@ class Pacioli(object):
                         w('<td class="value">%s</td>',n(p.at.value))
                         w('<td class="asset">%s</td>',p.at.asset)
                     w('<td></td>')
-                    w('</tr>') 
+                    if wallet!=None:
+                        if p.name == name:
+                            wallet.add(Amount(p.amount.value,p.amount.asset))
+                            w('<td class="value">%s</td>',wallet[p.amount.asset])
+                        else:
+                            w('<td></td>')
+                    w('</tr>')
             w('</table>')
             w('</div></body></html>')
             stream.close()
@@ -707,7 +719,7 @@ class Pacioli(object):
             dump_html_transaction(
                 os.path.join(path,'account-%s.html' % name.lower().replace(':','-')),
                 'Account: %s' % name,
-                accounts[name])
+                accounts[name],name,self.begin_accounts[name].wallet)
 
     def dump_latex(self,filename):
         dates, tags, accounts = self.dates_tags_accounts()
