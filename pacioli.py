@@ -682,9 +682,10 @@ class Pacioli(object):
                         w('<td class="asset">%s</td>',p.at.asset)
                     w('<td></td>')
                     if wallet!=None:
-                        if p.name == name:
+                        # FIX THIS FOR COUNTS WITH MULTIPLE ASSETS
+                        if (p.name+':').startswith(name+':'):
                             wallet.add(Amount(p.amount.value,p.amount.asset))
-                            w('<td class="value">%s</td>',wallet[p.amount.asset])
+                            w('<td class="value">%s %s</td>',wallet[p.amount.asset],p.amount.asset)
                         else:
                             w('<td></td>')
                     w('</tr>')
