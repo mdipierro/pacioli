@@ -205,7 +205,6 @@ class Transaction(TimeOrderable):
                     elif ovalue<0:
                         n, profit, fifo = -ovalue, 0.0, p.fifos[oasset]
                         while n and fifo:
-                            print fifo
                             (m,v,a) = fifo[0]
                             d = min(n,m)
                             n -= d
