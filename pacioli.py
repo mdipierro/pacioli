@@ -200,17 +200,21 @@ class Transaction(TimeOrderable):
                     if ovalue>0:
                         if not oasset in p.fifos:
                             p.fifos[oasset] = []
+                        print oasset, ovalue, atvalue, atasset
                         p.fifos[oasset].append((ovalue,atvalue,atasset))
                     elif ovalue<0:
                         n, profit, fifo = -ovalue, 0.0, p.fifos[oasset]
-                        while n:
+                        while n and fifo:
+                            print fifo
                             (m,v,a) = fifo[0]
                             d = min(n,m)
                             n -= d
                             wallet2.add(Amount(d*atvalue,atasset))
                             wallet2.add(Amount(-d*v,a))
-                            if d==m: fifo.pop()
-                            else: fifo[0] = (m-d,v)
+                            if d==m: 
+                                fifo.pop()
+                            else: 
+                                fifo[0] = (m-d,v,a)
                     value, asset = ovalue*atvalue, atasset
                 else:
                     value, asset = ovalue, oasset 
