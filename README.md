@@ -179,3 +179,7 @@ Pacioli generates also a <input.ledger>.output/<input.ledger>.latex file. You ca
 Pacioli includes the file demo.ledger which we stole from [beancount](http://furius.ca/beancount/) and we used for testing purposes. It also includes a demo.ledger.output generated from this example.
 
 Pacioli also includes a gaap.lendger (GAAP = General Accepted Accounting Practices) which you can customized and use for your business.
+
+## License
+
+BSD v3
