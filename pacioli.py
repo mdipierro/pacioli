@@ -127,27 +127,47 @@ def err(msg, *args):
     raise RuntimeError(msg % args)
 
 
-class Wallet(dict):
-    def add(self, other):
-        if isinstance(other, Amount):
-            other = {other.asset: other.value}
-        for asset, value in other.items():
-            self[asset] = self.get(asset, ZERO) + value
+class Amount:
+    __slots__ = ("value", "asset")
 
-    def sub(self, other):
-        if isinstance(other, Amount):
-            other = {other.asset: other.value}
-        for asset, value in other.items():
-            self[asset] = self.get(asset, ZERO) - value
+    def __init__(self, value, asset="USD"):
+        self.value = R(value)
+        self.asset = asset
 
-    def __getitem__(self, asset):
-        return self.get(asset, ZERO)
-
-    def value(self):
-        return sum(abs(x) for x in self.values())
+    def __iter__(self):
+        yield (self.asset, self.value)
 
     def __str__(self):
-        return " ".join(f"{v:+,} {k}" for (k, v) in self.items())
+        return f"{self.value:+} {self.asset}"
+
+
+class Wallet:
+    def __init__(self):
+        self.assets = {}
+
+    def add(self, other):
+        for name, value in other:
+            self.assets[name] = self.assets.get(name, ZERO) + value
+
+    def sub(self, other):
+        for name, value in other:
+            self.assets[name] = self.assets.get(name, ZERO) - value
+
+    def __iter__(self):
+        for item in self.assets.items():
+            yield item
+
+    def __getitem__(self, name):
+        return self.assets.get(name, ZERO)
+
+    def __len__(self):
+        return len(self.assets)
+
+    def value(self):
+        return sum(abs(value) for _, value in self)
+
+    def __str__(self):
+        return " ".join(f"{value:+} {name}" for (name, value) in self)
 
 
 class Account:
@@ -162,17 +182,6 @@ class Account:
 
     def __str__(self):
         return str(self.wallet)
-
-
-class Amount:
-    __slots__ = ("value", "asset")
-
-    def __init__(self, value, asset="USD"):
-        self.value = R(value)
-        self.asset = asset
-
-    def __str__(self):
-        return "{self.value:+,} {self.asset}"
 
 
 class Posting:
@@ -199,9 +208,9 @@ class Transaction:
 
     def run(self, p):
         pending_balance = None  # transaction balance
-        wallet = Wallet()  # transaction balance
+        wallet_balance = Wallet()  # transaction balance
         pending_gains = None  # transaction capital gains
-        wallet2 = Wallet()  # transaction capital gains
+        wallet_gains = Wallet()  # transaction capital gains
         for posting in self.postings:
             if posting.book == True:
                 if pending_gains:
@@ -225,8 +234,8 @@ class Transaction:
                             (available, value, asset) = fifo[0]
                             delta = min(amount, available)
                             amount -= delta
-                            wallet2.add(Amount(delta * atvalue, atasset))
-                            wallet2.add(Amount(-delta * value, asset))
+                            wallet_gains.add(Amount(delta * atvalue, atasset))
+                            wallet_gains.add(Amount(-delta * value, asset))
                             if delta == available:
                                 fifo = fifo[1:]
                             else:
@@ -236,7 +245,7 @@ class Transaction:
                 else:
                     value, asset = other_value, other_asset
                 print(value, asset)
-                wallet.add(Amount(-value, asset))
+                wallet_balance.add(Amount(-value, asset))
                 p.tree_add(name, other_value, other_asset)
             elif not pending_balance:
                 pending_balance = posting
@@ -244,23 +253,23 @@ class Transaction:
                 err("Incomplete Transaction: %s" % self.info)
         if pending_balance:
             self.postings.remove(pending_balance)
-            for asset, value in wallet.items():
+            for asset, value in wallet_balance:
                 if value:
                     self.postings.append(
                         Posting(pending_balance.name, Amount(value, asset))
                     )
                     p.tree_add(pending_balance.name, value, asset)
-        elif wallet.value() != 0:
+        elif wallet_balance.value() != 0:
             err("Unbalanced Transaction: %s" % self.info)
         if pending_gains:
             # book capital gains but do not recompute more than once
-            if len(wallet2) > 1:
+            if len(wallet_gains) > 1:
                 err("Cross Currency Capital Gains")
-            for asset, value in wallet2.items():
+            for asset, value in wallet_gains:
                 pending_gains.amount = Amount(-value, asset)
                 if value:
                     p.tree_add(pending_gains.name, -value, asset)
-        elif wallet2:
+        elif wallet_gains:
             err("Unreported Capital Gains: %s" % self.info)
 
 
@@ -338,8 +347,11 @@ class Pacioli:
                 self.accounts[sub] = Account(sub, open_date, assets)
 
     def close_account(self, name, close_date):
-        # todo: also close sub-accounts
         self.accounts[name].close_date = close_date
+        prefix = name + ":"
+        for key in self.accounts:
+            if key.startswith(prefix):
+                self.accounts[key].close_date = close_date
 
     def load(self, filename):
         stream = open(filename, "r") if isinstance(filename, str) else filename
@@ -483,62 +495,40 @@ class Pacioli:
             pad1 = " " * (40 - len(name))
             print(f"{name} {pad1}: {wallet}")
 
-    def save(self, filename, transactions=True, balance_with=None):
-        """TODO: fix this"""
-        stream = open(filename, "w") if isinstance(filename, str) else filename
-        w = lambda msg, *args: stream.write(msg % args)
-        stream.write(";;; Accounts\n\n")
-        for name, acc in self.accounts.items():
-            w(f"{acc.open_date} open {name}")
-            if acc.assets is not None:
-                w(" " + ",".join(acc.assets))
-            w("\n")
-        n = max(len(name) for name in self.accounts)
-        if transactions:
-            w("\n;;; Transactions\n\n")
+    def save(self, filename, balance_with=None):
+        with open(filename, "w") as stream:
+            w = lambda msg, *args: stream.write(msg % args)
+            stream.write(";;; Accounts\n\n")
+            for name, acc in self.accounts.items():
+                assets = ' '.join(acc.assets or [])
+                w(f"{acc.open_date} open {name} {assets}".strip() + '\n')
+            n = max(len(name) for name in self.accounts)
+            w("\n;; Transactions\n\n")
             for item in self.ledger:
                 if item.date > self.end_date:
                     break
                 elif isinstance(item, Check):
                     if item.balance_with:
-                        w("@pad %s %s %s\n", item.date, item.name, item.balance_with)
-                    w(
-                        "@check %s %s %s %s\n\n",
-                        item.date,
-                        item.name,
-                        item.amount.value,
-                        item.amount.asset,
-                    )
+                        w(f"{item.date} pad {item.name} {item.balance_with}\n")
+                    w(f"{item.date} balance {item.name} {item.amount}\n\n")
                 elif isinstance(item, Transaction):
-                    for tag in item.tags:
-                        w("@begintag %s\n", tag)
                     status = "!" if item.pending else "*"
-                    w("%s %s %s\n", item.date, status, item.info)
+                    w(f"{item.date} {status} {item.info}\n")
                     for posting in item.postings:
-                        w("    %s", posting.name)
-                        if posting.amount:
-                            m = posting.amount.value
-                            if not isinstance(m, str):
-                                m = "%.2f" % m
-                            w(" " * (n - len(posting.name) + 15 - len(m)))
-                            w("%s %s", m, posting.amount.asset)
-                        if posting.at:
-                            w(" @ %s %s", posting.at.value, posting.at.asset)
+                        if posting.book:
+                            w(f"  {posting.name} BOOK")
+                        elif posting.amount:
+                            m = "%.2f" % posting.amount.value
+                            padding = " " * (n - len(posting.name) + 15 - len(m))
+                            w(f"  {posting.name}{padding} {m} {posting.amount.asset}")
+                            if posting.at:
+                                w(f" @ {posting.at}")
                         if posting.comment:
-                            w(" ; %s", posting.comment)
+                            w(f" ; {posting.comment}")
                         w("\n")
-                    for tag in item.tags:
-                        w("@endtag %s\n\n", tag)
+                    if item.tags:
+                        w(f"  tags {' '.join(item.tags)}\n")
                     w("\n")
-        date = self.ledger[-1].date
-        for name, acc in self.accounts.items():
-            for asset in acc.wallet:
-                if not acc.assets or asset in acc.assets:
-                    if not transactions and balance_with:
-                        w("@pad %s %s %s\n", date, name, balance_with)
-                    w("@check %s %s %s %s\n", date, name, acc.wallet[asset], asset)
-        if stream != filename:
-            stream.close()
 
     def dates_tags_accounts(self):
         dates = dict()
@@ -600,7 +590,7 @@ class Pacioli:
                 e(name.lower().replace(":", "-")),
                 e(short or name),
             )
-        
+
         def dump_html_accounts(filename, header, accounts, s):
             stream = open(filename, "w")
             w = lambda s, *args: stream.write(s % args)
@@ -802,18 +792,23 @@ class Pacioli:
 
     @staticmethod
     def escape_latex(name):
-        return (name.replace("#", r"\#")
-                .replace("_", " ")
-                .replace("%", r"\%")
-                .replace("&", r"\&"))
+        return (
+            name.replace("#", r"\#")
+            .replace("_", " ")
+            .replace("%", r"\%")
+            .replace("&", r"\&")
+        )
 
     @staticmethod
     def number_latex(value):
-        return (value if isinstance(value, str)
-                else ("(%.2f)" % -value)
-                if value < 0
-                else ("%.2f" % value))
-                
+        return (
+            value
+            if isinstance(value, str)
+            else ("(%.2f)" % -value)
+            if value < 0
+            else ("%.2f" % value)
+        )
+
     def dump_latex(self, filename):
         dates, tags, accounts = self.dates_tags_accounts()
         e, n = self.escape_latex, self.number_latex
