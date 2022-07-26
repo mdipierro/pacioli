@@ -1,5 +1,4 @@
-#! /usr/bin/env python
-
+#!/usr/bin/env python
 """
 Author: Massimo Di Pierro <mdipierro@cs.depaul.edu>
 License: BSD <http://opensource.org/licenses/BSD-3-Clause>
@@ -16,7 +15,6 @@ The program contains three parts:
    - API
 2) Functions to read and write a general ledger in the beancount format (http://furius.ca/beancount/)
    - list of accounts
-   - support for ofx records
    - transactions with multiple postings
    - tags
    - checks
@@ -34,19 +32,19 @@ Consider a simple business that buys wood and sells wood toys.
 
 <file: toystore.ledger>
 ; define your accounts
-@defaccount De Assets:Cash
-@defaccount De Assets:AccountsReceivable
-@defaccount Cr Liabilities:Loan
-@defaccount Cr Liabilities:AccountPayable
-@defaccount Cr Equity:Opening-Balances
-@defaccount De Income:ToySale
-@defaccount De Income:Capital-Gains
-@defaccount Cr Expense:ShippingCosts
-@defaccount Cr Expense:Monthly:LoanInterest
+2000-01-01 open Assets:Cash
+2000-01-01 open Assets:AccountsReceivable
+2000-01-01 open Liabilities:Loan
+2000-01-01 open Liabilities:AccountPayable
+2000-01-01 open Equity:Opening-Balances
+2000-01-01 open Income:ToySale
+2000-01-01 open Income:Capital-Gains
+2000-01-01 open Expense:ShippingCosts
+2000-01-01 open Expense:Monthly:LoanInterest
 
 ; put initial money in cash account
-@pad   2013-01-01 Assets:Cash Equity:Opening-Balances
-@check 2013-01-01 Assets:Cash 2000 USD
+2013-01-01 pad Assets:Cash Equity:Opening-Balances
+2013-01-01 balance Assets:Cash 2000 USD
 
 ; transactions
 2013-01-01 * Receive a loan
@@ -61,29 +59,29 @@ Consider a simple business that buys wood and sells wood toys.
 2013-03-01 * buy wood
     Expense:ShippingCosts          500 USD
     Assets:Cash                            ; automatically computes as -(9*1000+500) USD
-
-@begintag client-0001
+pushtags client-0001
 2013-04-01 * first toy sale (cash transaction)
     Income:ToySale                -230 USD ; $230 from client #0001
     Assets:Cash                            ; automatically computed as 230 USD
-@endtag client-0001
+poptags client-0001
 
-@check 2013-04-01 Assets:Cash     2430 USD ; 2000+10000-9*1000-500+230 = 2430 USD
+2013-04-01 balance Assets:Cash     2430 USD ; 2000+10000-9*1000-500+230 = 2430 USD
 
 ; read more about AccountsReceivable
 ; http://www.investopedia.com/terms/a/accountsreceivable.asp
 
-@begintag client-0002
+pushtags client-0002
 2013-04-02 * second toy sale (invoice)
     Income:ToySale                -230 USD ; $230 billed to client #0001
     Assets:AccountsReceivable              ; automatically computed as 230 USD
+    tags x y z
 
 2013-04-10 * second toy sale (payment received after one week)
     Assets:AccountsReceivable     -230 USD ; $230 received from client #0001
     Assets:Cash                            ; automatically computed as 230 USD
-@endtag client-0002
+poptags client-0002
 
-@check 2013-04-10 Assets:Cash     2660 USD ; 2000+10000-9*1000-500+230*2 = 2460 USD
+2013-04-10 balance Assets:Cash     2660 USD ; 2000+10000-9*1000-500+230*2 = 2460 USD
 <file>
 
 pacioli.py -i toystore.ledger > oystore.balance
@@ -115,15 +113,12 @@ import copy
 import datetime
 import decimal
 import html
-import io
 import os
-import random
-import re
-import sys
-import time
 
 R = decimal.Decimal
 ZERO = R("0.0")
+BEGIN_TIME = datetime.date(2000, 1, 1)
+END_TIME = datetime.date(2999, 12, 31)
 
 __all__ = ("Wallet", "Amount", "Transaction", "Check", "Posting", "Pacioli")
 
@@ -156,13 +151,13 @@ class Wallet(dict):
 
 
 class Account:
-    __slots__ = ("name", "atype", "assets", "ofx", "wallet")
+    __slots__ = ("name", "assets", "wallet", "open_date", "close_date")
 
-    def __init__(self, name, atype, assets=None, ofx=None, leaf=None):
+    def __init__(self, name, open_date=BEGIN_TIME, assets=None):
         self.name = name
-        self.atype = atype
+        self.open_date = open_date
+        self.close_date = END_TIME
         self.assets = assets
-        self.ofx = ofx or {}
         self.wallet = Wallet()
 
     def __str__(self):
@@ -192,18 +187,15 @@ class Posting:
 
 
 class Transaction:
-    __slots__ = ("date", "info", "postings", "tags", "id", "pending", "edate")
+    __slots__ = ("date", "info", "postings", "tags", "id", "pending")
 
-    def __init__(
-        self, date, info, postings=None, tags=None, id=None, pending=False, edate=None
-    ):
+    def __init__(self, date, info, postings=None, tags=None, id=None, pending=False):
         self.date = parse_date(date) if isinstance(date, str) else date
         self.info = info
         self.postings = postings or []
-        self.tags = tags or []
+        self.tags = tags or set()
         self.id = id
         self.pending = pending
-        self.edate = parse_date(edate) if isinstance(edate, str) else date
 
     def run(self, p):
         pending_balance = None  # transaction balance
@@ -296,7 +288,10 @@ class Check:
 
 
 def parse_date(date):
-    return date and datetime.datetime.strptime(date, "%Y-%m-%d").date() or None
+    try:
+        return datetime.datetime.strptime(date, "%Y-%m-%d").date()
+    except Exception:
+        return None
 
 
 def tree_traverse(name):
@@ -317,15 +312,17 @@ class Pacioli:
     )
 
     def __init__(self):
-        self.begin_date = parse_date("2000-01-01")
-        self.end_date = parse_date("2999-12-31")
+        self.begin_date = BEGIN_TIME
+        self.end_date = END_TIME
         self.ledger = []
         self.accounts = dict()
         self.end_accounts = None
         self.begin_accounts = None
         self.diff_accounts = None
+        self.leaf_accounts = []
+        self.fifos = collections.defaultdict(list)
         for value in self.MODEL.values():
-            self.add_account(value)
+            self.open_account(value, BEGIN_TIME)
 
     def tree_add(self, name, value, asset):
         amount = Amount(value, asset)
@@ -333,95 +330,51 @@ class Pacioli:
             assets = self.accounts[sub].assets
             self.accounts[sub].wallet.add(amount)
 
-    def add_account(self, name, atype=None, assets=None):
+    def open_account(self, name, open_date, assets=None):
         if isinstance(assets, str):
             assets = [assets]
         for sub in tree_traverse(name):
             if not sub in self.accounts:
-                self.accounts[sub] = Account(sub, atype, assets)
+                self.accounts[sub] = Account(sub, open_date, assets)
+
+    def close_account(self, name, close_date):
+        # todo: also close sub-accounts
+        self.accounts[name].close_date = close_date
 
     def load(self, filename):
         stream = open(filename, "r") if isinstance(filename, str) else filename
         transaction = None
         pads = dict()
-        tags = []
+        tags = set()
         for lineno, line in enumerate(stream):
-            if line[:1] in ";#%":
-                continue
             line, comment = line.split(";", 1) if ";" in line else (line, "")
-            line = line.rstrip()
-            comment = comment.strip()
-            if not line:
-                continue  # it is a comment
-            elif line == "QUIT":
+            if not line.strip():
+                continue
+            elif line.lower() == "quit":
                 break
-            if line.startswith(" "):
-                if not transaction:
-                    err("%i: Posting Outside Transaction: %s", lineno, line)
-                match = self.re_posting.match(line)
-                if match:
-                    name = match.group("name")
-                    if not name in self.accounts:
-                        err("%i: Unknown account: %s", lineno, line)
-                    value = match.group("amount")
-                    other = match.group("amount2")
-                    amount = value and Amount(value, match.group("asset"))
-                    at = other and Amount(other, match.group("asset2"))
-                    posting = Posting(name=name, amount=amount, at=at, comment=comment)
-                else:
-                    match = self.re_book.match(line)
-                    if match:
-                        name = match.group("name")
-                        if not name in self.accounts:
-                            err("%i: Unknown account: %s", lineno, line)
-
-                        posting = Posting(name=name, comment=comment, book=True)
-                    else:
-                        err("%i: Invalid Posting: %s", lineno, line)
-                transaction.postings.append(posting)
-            else:
-                """
-                2008-01-22 * Online Banking payment - 5051 - VISA
-                  Assets:Current:Bank:Checking     -791.34 USD
-                  Liabilities:Credit-Card:VISA
-                """
-                if transaction:
-                    self.ledger.append(transaction)
-                    transaction = None
-                if line.startswith("@defaccount "):
-                    "@defaccount Cr Liabilities:Credit-Card:VISA USD"
-                    match = self.re_account.match(line)
-                    if not match:
-                        err("%i: Invalid Account Entry: ", lineno, line)
-                    atype = match.group("atype")
-                    name = match.group("name")
-                    asset = match.group("asset")
-                    asset = [s.strip() for s in asset.split()] if asset else None
-                    # print '@defaccount', atype, name, asset or ''
-                    self.add_account(name, atype, asset)
-                elif line.startswith("@var"):
-                    "@var ofx accid  1234...  Liabilities:Credit-Card:VISA"
-                    match = self.re_varofx.match(line)
-                    if not match:
-                        err("%i: Invalid Var Entry: %s", lineno, line)
-                    var = match.group("var")
-                    value = match.group("value")
-                    name = match.group("name")
-                    # print line
-                    if not name in self.accounts:
-                        err("%i: Unknown account: %s", lineno, line)
-                    self.accounts[name].ofx[var] = value
-                elif line.startswith("@check"):
-                    "@check 2008-01-01 Assets:Current:Bank:Checking  12.24 USD"
-                    match = self.re_check.match(line)
-                    if not match:
-                        err("%i: Invalid Check: %s", lineno, line)
-                    date = parse_date(match.group("date"))
-                    name = match.group("name")
-                    if not name in self.accounts:
-                        err("%i: Unknown account: %s", lineno, line)
-                    value = match.group("amount")
-                    asset = match.group("asset")
+            comment = comment.lstrip(";").strip()
+            if line.startswith("pushtags"):
+                tags |= set(line.split()[1:])
+            elif line.startswith("poptags"):
+                tags = tags - set(line.split()[1:])
+            elif not line.startswith(" "):
+                parts = line.strip().split()
+                date = parse_date(parts[0])
+                if not date:
+                    continue
+                if parts[1] == "open":
+                    name = parts[2]
+                    if not name.split(":")[0] in self.MODEL:
+                        err("%i: invallid account name: %s", lineno, name)
+                    assets = parts[3:]
+                    self.open_account(name, date, assets)
+                elif parts[1] == "close":
+                    name = parts[2]
+                    self.close_account(name, date)
+                elif parts[1] == "balance":
+                    name = parts[2]
+                    value = parts[3]
+                    asset = parts[4]
                     # print line
                     balance_with = (
                         pads[name][1]
@@ -437,41 +390,56 @@ class Pacioli:
                             id=lineno,
                         )
                     )
-                elif line.startswith("@pad"):
+                elif parts[1] == "pad":
                     "@pad 2007-12-31 Assets:Current:Bank:Checking Equity:Opening-Balances"
-                    match = self.re_pad.match(line)
-                    if not match:
-                        err("%i: Invalid Pad: %s", lineno, line)
-                    date = parse_date(match.group("date"))
-                    name = match.group("name")
+                    name = parts[2]
                     if not name in self.accounts:
                         err("%i: Unknown account: %s", lineno, line)
-                    name2 = match.group("name2")
+                    name2 = parts[3]
                     if not name2 in self.accounts:
                         err("%i: Unknown account: %s", lineno, line)
                     pads[name] = (date, name2)
-                elif line.startswith("@begintag"):
-                    tags.append(line[9:].strip())
-                elif line.startswith("@endtag"):
-                    tags.remove(line[7:].strip())
-                else:
+                elif parts[1] in ("*", "!", "txn", "transaction"):
                     pads.clear()
-                    match = self.re_transaction.match(line)
-                    # print line
-                    if not match:
-                        err("%i: Invalid Transaction: %s", lineno, line)
-                    date = parse_date(match.group("date"))
-                    edate = parse_date(match.group("edate")) or date
-                    info = match.group("description")
-                    pending = match.group("status") == "!"
+                    info = " ".join(parts[2:])
+                    pending = parts[1] == "!"
                     transaction = Transaction(
                         date,
                         info,
                         id=lineno,
-                        tags=copy.copy(tags),
                         pending=pending,
-                        edate=edate,
+                        tags=tags,
                     )
+                    self.ledger.append(transaction)
+                else:
+                    err("%i: Invalid line: 5s", lineno, line)
+            elif line.startswith(" "):
+                if not transaction:
+                    err("%i: Posting Outside Transaction: %s", lineno, line)
+                parts = line.strip().split()
+                name = parts[0]
+                if name == "tags":
+                    transaction.tags |= set(parts[1:])
+                    continue
+                elif name not in self.accounts:
+                    err("%i: Unkown accouunt: %s", lineno, name)
+                elif len(parts) == 1:
+                    posting = Posting(name=name, comment=comment, book=False)
+                elif parts[1].lower() == "book":
+                    posting = Posting(name=name, comment=comment, book=True)
+                elif len(parts) in (3, 6):
+                    amount = Amount(parts[1], parts[2])
+                    at = (
+                        Amount(parts[4], parts[5])
+                        if len(parts) == 6 and parts[3] == "@"
+                        else None
+                    )
+                    posting = Posting(
+                        name=name, amount=amount, at=at, comment=comment, book=False
+                    )
+                else:
+                    err("%i: Invalid line: 5s", lineno, line)
+                transaction.postings.append(posting)
         if transaction:
             self.ledger.append(transaction)
             transaction = None
@@ -495,6 +463,11 @@ class Pacioli:
                 self.begin_accounts = copy.deepcopy(self.accounts)
             if not self.end_accounts and item.date > self.end_date:
                 self.end_accounts = copy.deepcopy(self.accounts)
+            if isinstance(item, Transaction):
+                for posting in item.postings:
+                    account = self.accounts[posting.name]
+                    if item.date < account.open_date or item.date > account.close_date:
+                        err(f"Error: on {item.date} account {posting.name} is closed")
             item.run(self)
         if not self.begin_accounts:
             self.begin_accounts = copy.deepcopy(self.accounts)
@@ -504,26 +477,6 @@ class Pacioli:
         for name in self.diff_accounts:
             self.diff_accounts[name].wallet.sub(self.begin_accounts[name].wallet)
 
-    re_account = re.compile(
-        r"^@defaccount\s+(?P<atype>(De|Cr))\s+(?P<name>\S+)(\s+(?P<asset>\S+))?\s*$"
-    )
-    re_varofx = re.compile(
-        r"^@var\s+ofx\s+(?P<var>\S+)\s+(?P<value>\S+)\s+(?P<name>\S+)\s*$"
-    )
-    re_check = re.compile(
-        r"^@check\s+(?P<date>\d+\-\d+\-\d+)\s+(?P<name>\S+)\s+(?P<amount>[\-\+]?\d+(\.\d+)?)\s+(?P<asset>\S+)\s*$"
-    )
-    re_pad = re.compile(
-        r"^@pad\s+(?P<date>\d+\-\d+\-\d+)\s+(?P<name>\S+)\s+(?P<name2>\S+)\s*$"
-    )
-    re_transaction = re.compile(
-        r"^(?P<date>\d+\-\d+\-\d+)(?P<edate>\[\=\d+\-\d+\-\d+\])?\s+(?P<status>[*!])\s+(?P<description>.*)\s*$"
-    )
-    re_posting = re.compile(
-        r"^\s+(?P<name>\S+)(\s+(?P<amount>[\-\+]?\d+(\.\d+)?)\s+(?P<asset>\S+)(\s+@\s+(?P<amount2>[\-\+]?\d+(\.\d+)?)\s+(?P<asset2>\S+))?)?\s*$"
-    )
-    re_book = re.compile(r"^\s+\((?P<name>\S+)\)\s+BOOK\s+(?P<asset>\S+)\s*$")
-
     def report(self):
         for name in sorted(self.accounts):
             wallet = self.accounts[name].wallet
@@ -531,11 +484,12 @@ class Pacioli:
             print(f"{name} {pad1}: {wallet}")
 
     def save(self, filename, transactions=True, balance_with=None):
+        """TODO: fix this"""
         stream = open(filename, "w") if isinstance(filename, str) else filename
         w = lambda msg, *args: stream.write(msg % args)
         stream.write(";;; Accounts\n\n")
         for name, acc in self.accounts.items():
-            w("@defaccount %s %s", acc.atype, name)
+            w(f"{acc.open_date} open {name}")
             if acc.assets is not None:
                 w(" " + ",".join(acc.assets))
             w("\n")
@@ -646,7 +600,7 @@ class Pacioli:
                 e(name.lower().replace(":", "-")),
                 e(short or name),
             )
-
+        
         def dump_html_accounts(filename, header, accounts, s):
             stream = open(filename, "w")
             w = lambda s, *args: stream.write(s % args)
@@ -756,7 +710,7 @@ class Pacioli:
             w(
                 '<tr><th>Date</th><th>Account</th><th colspan="5">Amount</th><th>Tags</th>'
             )
-            if wallet != None:
+            if wallet is not None:
                 w("<th>Balance</th>")
             w("</tr>")
             for t in transactions:
@@ -764,7 +718,7 @@ class Pacioli:
                 w("<td>%s</td>", link_date(t.date))
                 w('<td colspan="6">%s</td>', e(t.info))
                 w("<td>%s</td>", " ".join(link_tag(tag) for tag in t.tags))
-                if wallet != None:
+                if wallet is not None:
                     w("<td></td>")
                 w("</tr>")
                 for p in t.postings:
@@ -782,7 +736,7 @@ class Pacioli:
                         w('<td class="value">%s</td>', n(p.at.value))
                         w('<td class="asset">%s</td>', p.at.asset)
                     w("<td></td>")
-                    if wallet != None:
+                    if wallet is not None:
                         # FIX THIS FOR COUNTS WITH MULTIPLE ASSETS
                         if (p.name + ":").startswith(name + ":"):
                             wallet.add(Amount(p.amount.value, p.amount.asset))
@@ -846,30 +800,25 @@ class Pacioli:
                 self.begin_accounts[name].wallet,
             )
 
+    @staticmethod
+    def escape_latex(name):
+        return (name.replace("#", r"\#")
+                .replace("_", " ")
+                .replace("%", r"\%")
+                .replace("&", r"\&"))
+
+    @staticmethod
+    def number_latex(value):
+        return (value if isinstance(value, str)
+                else ("(%.2f)" % -value)
+                if value < 0
+                else ("%.2f" % value))
+                
     def dump_latex(self, filename):
         dates, tags, accounts = self.dates_tags_accounts()
-        e = (
-            lambda t: t.replace("#", "\#")
-            .replace("_", " ")
-            .replace("%", "\%")
-            .replace("&", "\&")
-        )
-        n = (
-            lambda v: v
-            if isinstance(v, str)
-            else ("(%.2f)" % -v)
-            if v < 0
-            else ("%.2f" % v)
-        )
+        e, n = self.escape_latex, self.number_latex
         ALE = (self.MODEL["Assets"], self.MODEL["Liabilities"], self.MODEL["Equity"])
         PL = (self.MODEL["Income"], self.MODEL["Expenses"])
-
-        def link_account(name, short=None, path=""):
-            return '<a href="%saccount-%s.html">%s</a>' % (
-                path,
-                e(name.lower().replace(":", "-")),
-                e(short or name),
-            )
 
         stream = open(filename, "w")
         w = lambda s, *args: stream.write((s % args) + "\n")
@@ -965,8 +914,7 @@ class Pacioli:
 
 
 def main():
-    USAGE = "pacioli.py <input.ledger>"
-    parser = argparse.ArgumentParser(description=USAGE)
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "-i",
         "--input",
