@@ -468,13 +468,6 @@ Date & Account & Amount & Tags \\
 & Expenses:Clothes & 40.02 & USD &  & \\
 & Assets:Current:Cash & (40.02) & USD &  & \\
 \end{tabular}
-\section{Account: Equity:Opening-Balances}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-01 & Life insurance policy resale value & & & &  \\
-& Expenses:Insurance:Life & 4407.06 & USD &  & \\
-& Equity:Opening-Balances & (4407.06) & USD &  & \\
-\end{tabular}
 \section{Account: Expenses:Insurance}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
@@ -488,18 +481,12 @@ Date & Account & Amount & Tags \\
 & Assets:Current:BestBank:Checking & (42.69) & USD &  & \\
 & Expenses:Insurance:Life & 42.69 & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Insurance:Life}
+\section{Account: Equity:Opening-Balances}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-01 & Life insurance policy resale value & & & &  \\
 & Expenses:Insurance:Life & 4407.06 & USD &  & \\
 & Equity:Opening-Balances & (4407.06) & USD &  & \\
-2008-01-02 & LIFE INSURANCE -- LONDON LIFE & & & &  \\
-& Assets:Current:BestBank:Checking & (42.69) & USD &  & \\
-& Expenses:Insurance:Life & 42.69 & USD &  & \\
-2008-02-02 & LIFE INSURANCE -- LONDON LIFE & & & &  \\
-& Assets:Current:BestBank:Checking & (42.69) & USD &  & \\
-& Expenses:Insurance:Life & 42.69 & USD &  & \\
 \end{tabular}
 \section{Account: Expenses}
 \begin{tabular}{lllrll}
@@ -658,12 +645,121 @@ Date & Account & Amount & Tags \\
 & Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
 & Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
 \end{tabular}
+\section{Account: Expenses:Insurance:Life}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-01 & Life insurance policy resale value & & & &  \\
+& Expenses:Insurance:Life & 4407.06 & USD &  & \\
+& Equity:Opening-Balances & (4407.06) & USD &  & \\
+2008-01-02 & LIFE INSURANCE -- LONDON LIFE & & & &  \\
+& Assets:Current:BestBank:Checking & (42.69) & USD &  & \\
+& Expenses:Insurance:Life & 42.69 & USD &  & \\
+2008-02-02 & LIFE INSURANCE -- LONDON LIFE & & & &  \\
+& Assets:Current:BestBank:Checking & (42.69) & USD &  & \\
+& Expenses:Insurance:Life & 42.69 & USD &  & \\
+\end{tabular}
 \section{Account: Equity}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-01 & Life insurance policy resale value & & & &  \\
 & Expenses:Insurance:Life & 4407.06 & USD &  & \\
 & Equity:Opening-Balances & (4407.06) & USD &  & \\
+\end{tabular}
+\section{Account: Expenses:Home:Monthly}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-01-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-01-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-02-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-02-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-02-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-03-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-03-10 & Propri-Manage | special billing, spring works & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 61.25 & USD &  & \\
+& Liabilities:Condo-Management & (61.25) & USD &  & \\
+2008-03-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-03-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+\end{tabular}
+\section{Account: Expenses:Home:Monthly:Condo-Fees}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-02-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-03-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-03-10 & Propri-Manage | special billing, spring works & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 61.25 & USD &  & \\
+& Liabilities:Condo-Management & (61.25) & USD &  & \\
+\end{tabular}
+\section{Account: Expenses:Home}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-01-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-01-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-02-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-02-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-02-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-03-01 & Propri-Manage | & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
+& Liabilities:Condo-Management & (212.61) & USD &  & \\
+2008-03-10 & Propri-Manage | special billing, spring works & & & &  \\
+& Expenses:Home:Monthly:Condo-Fees & 61.25 & USD &  & \\
+& Liabilities:Condo-Management & (61.25) & USD &  & \\
+2008-03-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-03-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
 \end{tabular}
 \section{Account: Liabilities}
 \begin{tabular}{lllrll}
@@ -723,22 +819,6 @@ Date & Account & Amount & Tags \\
 & Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
 & Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Home:Monthly:Condo-Fees}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-02-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-03-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-03-10 & Propri-Manage | special billing, spring works & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 61.25 & USD &  & \\
-& Liabilities:Condo-Management & (61.25) & USD &  & \\
-\end{tabular}
 \section{Account: Liabilities:Condo-Management}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
@@ -757,86 +837,6 @@ Date & Account & Amount & Tags \\
 2008-03-10 & Propri-Manage | special billing, spring works & & & &  \\
 & Expenses:Home:Monthly:Condo-Fees & 61.25 & USD &  & \\
 & Liabilities:Condo-Management & (61.25) & USD &  & \\
-\end{tabular}
-\section{Account: Expenses:Home:Monthly}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-01-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-01-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-02-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-02-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-02-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-03-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-03-10 & Propri-Manage | special billing, spring works & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 61.25 & USD &  & \\
-& Liabilities:Condo-Management & (61.25) & USD &  & \\
-2008-03-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-03-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-\end{tabular}
-\section{Account: Expenses:Home}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-01-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-01-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-02-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-02-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-02-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-03-01 & Propri-Manage | & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 212.61 & USD &  & \\
-& Liabilities:Condo-Management & (212.61) & USD &  & \\
-2008-03-10 & Propri-Manage | special billing, spring works & & & &  \\
-& Expenses:Home:Monthly:Condo-Fees & 61.25 & USD &  & \\
-& Liabilities:Condo-Management & (61.25) & USD &  & \\
-2008-03-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-03-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
 \end{tabular}
 \section{Account: Assets:Current}
 \begin{tabular}{lllrll}
@@ -1327,34 +1327,6 @@ Date & Account & Amount & Tags \\
 & Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
 & Income:Salary:AcmeCo & (2000.00) & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Food:Alcool}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-02 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-01-16 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-02-02 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-02-16 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-03-02 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-03-16 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-\end{tabular}
 \section{Account: Assets:Current:Cash}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
@@ -1447,49 +1419,6 @@ Date & Account & Amount & Tags \\
 & Assets:Current:Cash & (440.00) & CAD &  & \\
 & Assets:Current:Cash & 431.92 & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Food:Restaurant}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-02 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-01-15 & Cafe Imagination | & & & &  \\
-& Expenses:Food:Restaurant & 47.00 & USD &  & \\
-& Liabilities:Credit-Card:VISA & (47.00) & USD &  & \\
-2008-01-16 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-01-19 & Soupe Bol | & & & &  \\
-& Liabilities:Credit-Card:VISA & (21.00) & USD &  & \\
-& Expenses:Food:Restaurant & 21.00 & USD &  & \\
-2008-01-27 & Scola Pasta | & & & &  \\
-& Expenses:Food:Restaurant & 51.17 & USD &  & \\
-& Liabilities:Credit-Card:VISA & (51.17) & USD &  & \\
-2008-01-27 & Dinner at chalet & & & & ski-trip \\
-& Expenses:Food:Restaurant & 35.33 & USD &  & \\
-& Assets:Current:Cash & (35.33) & USD &  & \\
-2008-01-28 & breakfast & & & & ski-trip \\
-& Expenses:Food:Restaurant & 17.23 & USD &  & \\
-& Assets:Current:Cash & (17.23) & USD &  & \\
-2008-02-02 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-02-16 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-03-02 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-2008-03-16 & Distribution of cash expenses & & & &  \\
-& Expenses:Food:Restaurant & 300.00 & USD &  & \\
-& Expenses:Food:Alcool & 100.00 & USD &  & \\
-& Assets:Current:Cash & (400.00) & USD &  & \\
-\end{tabular}
 \section{Account: Expenses:Food}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
@@ -1536,6 +1465,87 @@ Date & Account & Amount & Tags \\
 & Expenses:Food:Alcool & 100.00 & USD &  & \\
 & Assets:Current:Cash & (400.00) & USD &  & \\
 \end{tabular}
+\section{Account: Expenses:Food:Alcool}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-02 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-01-16 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-02-02 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-02-16 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-03-02 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-03-16 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+\end{tabular}
+\section{Account: Expenses:Food:Restaurant}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-02 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-01-15 & Cafe Imagination | & & & &  \\
+& Expenses:Food:Restaurant & 47.00 & USD &  & \\
+& Liabilities:Credit-Card:VISA & (47.00) & USD &  & \\
+2008-01-16 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-01-19 & Soupe Bol | & & & &  \\
+& Liabilities:Credit-Card:VISA & (21.00) & USD &  & \\
+& Expenses:Food:Restaurant & 21.00 & USD &  & \\
+2008-01-27 & Scola Pasta | & & & &  \\
+& Expenses:Food:Restaurant & 51.17 & USD &  & \\
+& Liabilities:Credit-Card:VISA & (51.17) & USD &  & \\
+2008-01-27 & Dinner at chalet & & & & ski-trip \\
+& Expenses:Food:Restaurant & 35.33 & USD &  & \\
+& Assets:Current:Cash & (35.33) & USD &  & \\
+2008-01-28 & breakfast & & & & ski-trip \\
+& Expenses:Food:Restaurant & 17.23 & USD &  & \\
+& Assets:Current:Cash & (17.23) & USD &  & \\
+2008-02-02 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-02-16 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-03-02 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+2008-03-16 & Distribution of cash expenses & & & &  \\
+& Expenses:Food:Restaurant & 300.00 & USD &  & \\
+& Expenses:Food:Alcool & 100.00 & USD &  & \\
+& Assets:Current:Cash & (400.00) & USD &  & \\
+\end{tabular}
+\section{Account: Income:Investments:Interest:Savings}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-03 & DEPOSIT INTEREST & & & &  \\
+& Assets:Current:BestBank:Savings & 95.69 & USD &  & \\
+& Income:Investments:Interest:Savings & (95.69) & USD &  & \\
+2008-02-03 & DEPOSIT INTEREST & & & &  \\
+& Assets:Current:BestBank:Savings & 102.34 & USD &  & \\
+& Income:Investments:Interest:Savings & (102.34) & USD &  & \\
+\end{tabular}
 \section{Account: Income:Investments}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
@@ -1557,45 +1567,15 @@ Date & Account & Amount & Tags \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
 & Income:Investments:Capital-Gains & (228.60) & USD &  & \\
 \end{tabular}
-\section{Account: Income}
+\section{Account: Income:Investments:Interest}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-03 & DEPOSIT INTEREST & & & &  \\
 & Assets:Current:BestBank:Savings & 95.69 & USD &  & \\
 & Income:Investments:Interest:Savings & (95.69) & USD &  & \\
-2008-01-10 & ACME | Salary paid from employer & & & &  \\
-& Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
-& Income:Salary:AcmeCo & (2000.00) & USD &  & \\
 2008-01-12 & Deposit interest & & & &  \\
 & Assets:Current:BestBank:Checking & 0.02 & USD &  & \\
 & Income:Investments:Interest:Checking & (0.02) & USD &  & \\
-2008-01-25 & ACME | Salary paid from employer & & & &  \\
-& Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
-& Income:Salary:AcmeCo & (2000.00) & USD &  & \\
-2008-02-02 & DIVIDEND from AAPL position & & & &  \\
-& Assets:Investments:UTrade:Account & 0.68 & USD &  & \\
-& Income:Investments:Dividends & (0.68) & USD &  & \\
-2008-02-03 & DEPOSIT INTEREST & & & &  \\
-& Assets:Current:BestBank:Savings & 102.34 & USD &  & \\
-& Income:Investments:Interest:Savings & (102.34) & USD &  & \\
-2008-02-10 & ACME | Salary paid from employer & & & &  \\
-& Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
-& Income:Salary:AcmeCo & (2000.00) & USD &  & \\
-2008-02-25 & ACME | Salary paid from employer & & & &  \\
-& Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
-& Income:Salary:AcmeCo & (2000.00) & USD &  & \\
-2008-02-28 & Sell off my Apple & & & &  \\
-& Assets:Investments:UTrade:Account:AAPL & (30.00) & AAPL &  @ 193.02 USD & \\
-& Assets:Investments:UTrade:Account & 5780.65 & USD &  & \\
-& Expenses:Financial:Commissions & 9.95 & USD &  & \\
-& Income:Investments:Capital-Gains & (228.60) & USD &  & \\
-\end{tabular}
-\section{Account: Income:Investments:Interest:Savings}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-03 & DEPOSIT INTEREST & & & &  \\
-& Assets:Current:BestBank:Savings & 95.69 & USD &  & \\
-& Income:Investments:Interest:Savings & (95.69) & USD &  & \\
 2008-02-03 & DEPOSIT INTEREST & & & &  \\
 & Assets:Current:BestBank:Savings & 102.34 & USD &  & \\
 & Income:Investments:Interest:Savings & (102.34) & USD &  & \\
@@ -1640,18 +1620,38 @@ Date & Account & Amount & Tags \\
 & Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
 & Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
 \end{tabular}
-\section{Account: Income:Investments:Interest}
+\section{Account: Income}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-03 & DEPOSIT INTEREST & & & &  \\
 & Assets:Current:BestBank:Savings & 95.69 & USD &  & \\
 & Income:Investments:Interest:Savings & (95.69) & USD &  & \\
+2008-01-10 & ACME | Salary paid from employer & & & &  \\
+& Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
+& Income:Salary:AcmeCo & (2000.00) & USD &  & \\
 2008-01-12 & Deposit interest & & & &  \\
 & Assets:Current:BestBank:Checking & 0.02 & USD &  & \\
 & Income:Investments:Interest:Checking & (0.02) & USD &  & \\
+2008-01-25 & ACME | Salary paid from employer & & & &  \\
+& Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
+& Income:Salary:AcmeCo & (2000.00) & USD &  & \\
+2008-02-02 & DIVIDEND from AAPL position & & & &  \\
+& Assets:Investments:UTrade:Account & 0.68 & USD &  & \\
+& Income:Investments:Dividends & (0.68) & USD &  & \\
 2008-02-03 & DEPOSIT INTEREST & & & &  \\
 & Assets:Current:BestBank:Savings & 102.34 & USD &  & \\
 & Income:Investments:Interest:Savings & (102.34) & USD &  & \\
+2008-02-10 & ACME | Salary paid from employer & & & &  \\
+& Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
+& Income:Salary:AcmeCo & (2000.00) & USD &  & \\
+2008-02-25 & ACME | Salary paid from employer & & & &  \\
+& Assets:Current:BestBank:Checking & 2000.00 & USD &  & \\
+& Income:Salary:AcmeCo & (2000.00) & USD &  & \\
+2008-02-28 & Sell off my Apple & & & &  \\
+& Assets:Investments:UTrade:Account:AAPL & (30.00) & AAPL &  @ 193.02 USD & \\
+& Assets:Investments:UTrade:Account & 5780.65 & USD &  & \\
+& Expenses:Financial:Commissions & 9.95 & USD &  & \\
+& Income:Investments:Capital-Gains & (228.60) & USD &  & \\
 \end{tabular}
 \section{Account: Expenses:Taxes:US-Federal}
 \begin{tabular}{lllrll}
@@ -1667,20 +1667,19 @@ Date & Account & Amount & Tags \\
 & Assets:Current:BestBank:Checking & 77.76 & USD &  & \\
 & Expenses:Taxes:US-Federal & (77.76) & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Financial}
+\section{Account: Assets:Investments:UTrade}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-08 & Buy some Apple Computer & & & &  \\
 & Assets:Investments:UTrade:Account:AAPL & 30.00 & AAPL &  @ 185.40 USD & \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
 & Assets:Investments:UTrade:Account & (5571.95) & USD &  & \\
-2008-01-10 & MONTHLY FEE & & & &  \\
-& Assets:Current:BestBank:Checking & (4.00) & USD &  & \\
-& Expenses:Financial:Fees & 4.00 & USD &  & \\
-2008-01-12 & ATM withdrawal - 00044242 & & & &  \\
-& Assets:Current:BestBank:Checking & (301.50) & USD &  & \\
-& Expenses:Financial:Fees & 1.50 & USD &  & \\
-& Assets:Current:Cash & 300.00 & USD &  & \\
+2008-02-02 & DIVIDEND from AAPL position & & & &  \\
+& Assets:Investments:UTrade:Account & 0.68 & USD &  & \\
+& Income:Investments:Dividends & (0.68) & USD &  & \\
+2008-02-03 & Transferring money to brokerage account for better investment. & & & &  \\
+& Assets:Current:BestBank:Savings & (10000.00) & USD &  & \\
+& Assets:Investments:UTrade:Account & 10000.00 & USD &  & \\
 2008-02-10 & Buy some japanese ETF from iShares & & & &  \\
 & Assets:Investments:UTrade:Account:EWJ & 100.00 & EWJ &  @ 13.34 USD & \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
@@ -1690,10 +1689,6 @@ Date & Account & Amount & Tags \\
 & Assets:Investments:UTrade:Account & 5780.65 & USD &  & \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
 & Income:Investments:Capital-Gains & (228.60) & USD &  & \\
-2008-03-26 & Bought an iPhone to Gilbert (had to use ATM) & & & &  \\
-& Assets:AccountsReceivable & 431.92 & USD &  & \\
-& Expenses:Financial:Fees & 3.00 & USD &  & \\
-& Assets:Current:Cash & (434.92) & USD &  & \\
 \end{tabular}
 \section{Account: Assets:Investments:UTrade:Account:AAPL}
 \begin{tabular}{lllrll}
@@ -1708,19 +1703,13 @@ Date & Account & Amount & Tags \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
 & Income:Investments:Capital-Gains & (228.60) & USD &  & \\
 \end{tabular}
-\section{Account: Assets:Investments:UTrade}
+\section{Account: Expenses:Financial:Commissions}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-08 & Buy some Apple Computer & & & &  \\
 & Assets:Investments:UTrade:Account:AAPL & 30.00 & AAPL &  @ 185.40 USD & \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
 & Assets:Investments:UTrade:Account & (5571.95) & USD &  & \\
-2008-02-02 & DIVIDEND from AAPL position & & & &  \\
-& Assets:Investments:UTrade:Account & 0.68 & USD &  & \\
-& Income:Investments:Dividends & (0.68) & USD &  & \\
-2008-02-03 & Transferring money to brokerage account for better investment. & & & &  \\
-& Assets:Current:BestBank:Savings & (10000.00) & USD &  & \\
-& Assets:Investments:UTrade:Account & 10000.00 & USD &  & \\
 2008-02-10 & Buy some japanese ETF from iShares & & & &  \\
 & Assets:Investments:UTrade:Account:EWJ & 100.00 & EWJ &  @ 13.34 USD & \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
@@ -1754,13 +1743,20 @@ Date & Account & Amount & Tags \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
 & Income:Investments:Capital-Gains & (228.60) & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Financial:Commissions}
+\section{Account: Expenses:Financial}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-08 & Buy some Apple Computer & & & &  \\
 & Assets:Investments:UTrade:Account:AAPL & 30.00 & AAPL &  @ 185.40 USD & \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
 & Assets:Investments:UTrade:Account & (5571.95) & USD &  & \\
+2008-01-10 & MONTHLY FEE & & & &  \\
+& Assets:Current:BestBank:Checking & (4.00) & USD &  & \\
+& Expenses:Financial:Fees & 4.00 & USD &  & \\
+2008-01-12 & ATM withdrawal - 00044242 & & & &  \\
+& Assets:Current:BestBank:Checking & (301.50) & USD &  & \\
+& Expenses:Financial:Fees & 1.50 & USD &  & \\
+& Assets:Current:Cash & 300.00 & USD &  & \\
 2008-02-10 & Buy some japanese ETF from iShares & & & &  \\
 & Assets:Investments:UTrade:Account:EWJ & 100.00 & EWJ &  @ 13.34 USD & \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
@@ -1770,6 +1766,10 @@ Date & Account & Amount & Tags \\
 & Assets:Investments:UTrade:Account & 5780.65 & USD &  & \\
 & Expenses:Financial:Commissions & 9.95 & USD &  & \\
 & Income:Investments:Capital-Gains & (228.60) & USD &  & \\
+2008-03-26 & Bought an iPhone to Gilbert (had to use ATM) & & & &  \\
+& Assets:AccountsReceivable & 431.92 & USD &  & \\
+& Expenses:Financial:Fees & 3.00 & USD &  & \\
+& Assets:Current:Cash & (434.92) & USD &  & \\
 \end{tabular}
 \section{Account: Assets:Investments}
 \begin{tabular}{lllrll}
@@ -1848,34 +1848,6 @@ Date & Account & Amount & Tags \\
 & Assets:Current:BestBank:Checking & 0.02 & USD &  & \\
 & Income:Investments:Interest:Checking & (0.02) & USD &  & \\
 \end{tabular}
-\section{Account: Liabilities:BestBank:Mortgage:Loan}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-01-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-02-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-02-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-03-12 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-2008-03-27 & MORTGAGE PAYMENT & & & &  \\
-& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
-& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
-& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
-\end{tabular}
 \section{Account: Liabilities:BestBank:Mortgage}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
@@ -1905,6 +1877,34 @@ Date & Account & Amount & Tags \\
 & Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
 \end{tabular}
 \section{Account: Liabilities:BestBank}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-01-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-02-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-02-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-03-12 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+2008-03-27 & MORTGAGE PAYMENT & & & &  \\
+& Assets:Current:BestBank:Savings & (464.46) & USD &  & \\
+& Liabilities:BestBank:Mortgage:Loan & 171.01 & USD &  & \\
+& Expenses:Home:Monthly:Loan-Interest & 293.45 & USD &  & \\
+\end{tabular}
+\section{Account: Liabilities:BestBank:Mortgage:Loan}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-12 & MORTGAGE PAYMENT & & & &  \\
@@ -1998,6 +1998,13 @@ Date & Account & Amount & Tags \\
 & Expenses:Food:Restaurant & 51.17 & USD &  & \\
 & Liabilities:Credit-Card:VISA & (51.17) & USD &  & \\
 \end{tabular}
+\section{Account: Expenses:Sports:Gear}
+\begin{tabular}{lllrll}
+Date & Account & Amount & Tags \\
+2008-01-17 & Interac Purchase - 1341 - ACCES SPORTS S & & & &  \\
+& Assets:Current:BestBank:Checking & (89.00) & USD &  & \\
+& Expenses:Sports:Gear & 89.00 & USD &  & \\
+\end{tabular}
 \section{Account: Expenses:Sports}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
@@ -2008,12 +2015,12 @@ Date & Account & Amount & Tags \\
 & Expenses:Sports & 120.00 & USD &  & \\
 & Assets:Current:Cash & (120.00) & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Sports:Gear}
+\section{Account: Expenses:Communications:Phone}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
-2008-01-17 & Interac Purchase - 1341 - ACCES SPORTS S & & & &  \\
-& Assets:Current:BestBank:Checking & (89.00) & USD &  & \\
-& Expenses:Sports:Gear & 89.00 & USD &  & \\
+2008-01-19 & FIDO | & & & &  \\
+& Expenses:Communications:Phone & 121.96 & USD &  & \\
+& Liabilities:Credit-Card:VISA & (121.96) & USD &  & \\
 \end{tabular}
 \section{Account: Expenses:Communications}
 \begin{tabular}{lllrll}
@@ -2024,13 +2031,6 @@ Date & Account & Amount & Tags \\
 2008-01-21 & USPS | sent package to mom & & & &  \\
 & Expenses:Communications:Mail & 4.43 & USD &  & \\
 & Assets:Current:Cash & (4.43) & USD &  & \\
-\end{tabular}
-\section{Account: Expenses:Communications:Phone}
-\begin{tabular}{lllrll}
-Date & Account & Amount & Tags \\
-2008-01-19 & FIDO | & & & &  \\
-& Expenses:Communications:Phone & 121.96 & USD &  & \\
-& Liabilities:Credit-Card:VISA & (121.96) & USD &  & \\
 \end{tabular}
 \section{Account: Expenses:Food:Grocery}
 \begin{tabular}{lllrll}
@@ -2046,14 +2046,14 @@ Date & Account & Amount & Tags \\
 & Expenses:Communications:Mail & 4.43 & USD &  & \\
 & Assets:Current:Cash & (4.43) & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Car:Gas}
+\section{Account: Expenses:Car}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-27 & SUNONO | fill'er up & & & & ski-trip \\
 & Expenses:Car:Gas & 40.00 & USD &  & \\
 & Assets:Current:Cash & (40.00) & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Car}
+\section{Account: Expenses:Car:Gas}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-01-27 & SUNONO | fill'er up & & & & ski-trip \\
@@ -2084,14 +2084,14 @@ Date & Account & Amount & Tags \\
 & Expenses:Medical & 312.00 & USD &  & \\
 & Assets:Current:Cash & (312.00) & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Transportation:Taxi}
+\section{Account: Expenses:Transportation}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-02-04 & taxi home from meeting & & & &  \\
 & Expenses:Transportation:Taxi & 12.00 & USD &  & \\
 & Assets:Current:Cash & (12.00) & USD &  & \\
 \end{tabular}
-\section{Account: Expenses:Transportation}
+\section{Account: Expenses:Transportation:Taxi}
 \begin{tabular}{lllrll}
 Date & Account & Amount & Tags \\
 2008-02-04 & taxi home from meeting & & & &  \\

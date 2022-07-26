@@ -13,7 +13,6 @@ The program contains three parts:
    - Assets, Liabilities, Equity, Income, Expenses 
    - Computations of Balance Sheet and Profit&Losses
    - Automatic computation FIFO capital-gains
-   - Scenario analysis (WORK IN PROGRESS)
    - API
 2) Functions to read and write a general ledger in the beancount format (http://furius.ca/beancount/)
    - list of accounts
@@ -25,8 +24,8 @@ The program contains three parts:
 3) Reporting
    - The output of the program is in HTML
    - Reporting in Latex/PDF (WORK IN PROGRESS)
-   - Reporting in JSON (WORKM IN PROGRESS)
-   - Charting
+   - Reporting in JSON (WORK IN PROGRESS)
+   - Charting (WORK IN PROGRESS)
 
 This program uses a single file to store the ledger. This is only appropriate for small bussinesses.
 Our benchmark indicates that the program requires 0.0004 seconds/transactions. Therefore if a business processes about 1000 transaction/day, the system can process one year of trasactions in about 2 minutes. Additional time is required to generate reports.
@@ -207,66 +206,68 @@ class Transaction:
         self.edate = parse_date(edate) if isinstance(edate, str) else date
 
     def run(self, p):
-        pending = None  # transaction balance
+        pending_balance = None  # transaction balance
         wallet = Wallet()  # transaction balance
-        pending2 = None  # transaction capital gains
+        pending_gains = None  # transaction capital gains
         wallet2 = Wallet()  # transaction capital gains
         for posting in self.postings:
             if posting.book == True:
-                if pending2:
+                if pending_gains:
                     err("Ambiguous booking")
-                pending2 = posting
+                pending_gains = posting
                 continue
             name = posting.name
             if posting.amount is not None:
-                ovalue, oasset = posting.amount.value, posting.amount.asset
+                other_value, other_asset = posting.amount.value, posting.amount.asset
                 assets = p.accounts[name].assets
-                if assets and oasset not in assets:
+                if assets and other_asset not in assets:
                     err("Invalid Currency/Asset in %s" % name)
                 elif posting.at:
                     atvalue, atasset = posting.at.value, posting.at.asset
-                    if ovalue > 0:
-                        print(oasset, ovalue, atvalue, atasset)
-                        p.fifos[oasset].append((ovalue, atvalue, atasset))
-                    elif ovalue < 0:
-                        n, profit, fifo = -ovalue, 0.0, p.fifos[oasset]
-                        while n and fifo:
-                            (m, v, a) = fifo[0]
-                            d = min(n, m)
-                            n -= d
-                            wallet2.add(Amount(d * atvalue, atasset))
-                            wallet2.add(Amount(-d * v, a))
-                            if d == m:
+                    if other_value > 0:
+                        print(other_asset, other_value, atvalue, atasset)
+                        p.fifos[other_asset].append((other_value, atvalue, atasset))
+                    elif other_value < 0:
+                        amount, profit, fifo = -other_value, 0.0, p.fifos[other_asset]
+                        while amount and fifo:
+                            (available, value, asset) = fifo[0]
+                            delta = min(amount, available)
+                            amount -= delta
+                            wallet2.add(Amount(delta * atvalue, atasset))
+                            wallet2.add(Amount(-delta * value, asset))
+                            if delta == available:
                                 fifo = fifo[1:]
                             else:
-                                fifo[0] = (m - d, v, a)
+                                fifo[0] = (available - delta, value, asset)
 
-                    value, asset = ovalue * atvalue, atasset
+                    value, asset = other_value * atvalue, atasset
                 else:
-                    value, asset = ovalue, oasset
+                    value, asset = other_value, other_asset
                 print(value, asset)
                 wallet.add(Amount(-value, asset))
-                p.tree_add(name, ovalue, oasset)
-            elif not pending:
-                pending = posting
+                p.tree_add(name, other_value, other_asset)
+            elif not pending_balance:
+                pending_balance = posting
             else:
                 err("Incomplete Transaction: %s" % self.info)
-        if pending:
-            self.postings.remove(pending)
+        if pending_balance:
+            self.postings.remove(pending_balance)
             for asset, value in wallet.items():
                 if value:
-                    self.postings.append(Posting(pending.name, Amount(value, asset)))
-                    p.tree_add(pending.name, value, asset)
+                    self.postings.append(
+                        Posting(pending_balance.name, Amount(value, asset))
+                    )
+                    p.tree_add(pending_balance.name, value, asset)
         elif wallet.value() != 0:
             err("Unbalanced Transaction: %s" % self.info)
-        if pending2:
+        if pending_gains:
             # book capital gains but do not recompute more than once
             if len(wallet2) > 1:
                 err("Cross Currency Capital Gains")
             for asset, value in wallet2.items():
-                pending2.amount = Amount(-value, asset)
+                pending_gains.amount = Amount(-value, asset)
                 if value:
-                    p.tree_add(pending2.name, -value, asset)
+                    p.tree_add(pending_gains.name, -value, asset)
         elif wallet2:
             err("Unreported Capital Gains: %s" % self.info)
 
