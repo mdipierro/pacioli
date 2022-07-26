@@ -501,7 +501,9 @@ class Pacioli:
             stream.write(";;; Accounts\n\n")
             for name, acc in self.accounts.items():
                 assets = ' '.join(acc.assets or [])
-                w(f"{acc.open_date} open {name} {assets}".strip() + '\n')
+                w(f"{acc.open_date} open  {name} {assets}".strip() + '\n')
+                if acc.close_date < END_TIME:
+                    w(f"{acc.close_date} close {name} {assets}".strip() + '\n')
             n = max(len(name) for name in self.accounts)
             w("\n;; Transactions\n\n")
             for item in self.ledger:
