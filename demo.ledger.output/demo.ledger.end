@@ -351,18 +351,18 @@
 2008-04-02 * Gilbert paid back for iPhone
     Assets:Current:Cash                            440.00 CAD
     Assets:AccountsReceivable                     -431.92 USD
-    Assets:Current:Cash                            431.92 USD
     Assets:Current:Cash                           -440.00 CAD
+    Assets:Current:Cash                            431.92 USD
 
 @check 2008-04-02 Assets:AccountsReceivable 0.00 USD
 @check 2008-04-02 Assets:Current:BestBank:Checking 3618.80 USD
 @check 2008-04-02 Assets:Current:BestBank:Savings 1411.27 USD
-@check 2008-04-02 Assets:Current:Cash -1017.67 USD
 @check 2008-04-02 Assets:Current:Cash 200.00 CAD
+@check 2008-04-02 Assets:Current:Cash -1017.67 USD
 @check 2008-04-02 Assets:Investments:UTrade:Account:AAPL 0.0 AAPL
 @check 2008-04-02 Assets:Investments:UTrade:Account:EWJ 100.0 EWJ
-@check 2008-04-02 Equity:Opening-Balances -48559.87 USD
 @check 2008-04-02 Equity:Opening-Balances -200.0 CAD
+@check 2008-04-02 Equity:Opening-Balances -48559.87 USD
 @check 2008-04-02 Expenses:Books 74.43 USD
 @check 2008-04-02 Expenses:Car:Gas 40.0 USD
 @check 2008-04-02 Expenses:Charity 50.0 USD
