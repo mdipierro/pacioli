@@ -1,40 +1,67 @@
 ;;; Accounts
 
-@defaccount De Assets:AccountsReceivable
-@defaccount De Assets:Current:BestBank:Checking USD
-@defaccount De Assets:Current:BestBank:Savings USD
+@defaccount None Assets
+@defaccount None Liabilities
+@defaccount None Equity
+@defaccount None Income
+@defaccount None Expenses
 @defaccount De Assets:Current:Cash
+@defaccount De Assets:Current
+@defaccount De Assets:Current:BestBank:Checking USD
+@defaccount De Assets:Current:BestBank USD
+@defaccount De Assets:Current:BestBank:Savings USD
+@defaccount De Assets:Investments:UTrade:Account USD
+@defaccount De Assets:Investments:UTrade USD
+@defaccount De Assets:Investments USD
 @defaccount De Assets:Investments:UTrade:Account:AAPL AAPL
 @defaccount De Assets:Investments:UTrade:Account:EWJ EWJ
-@defaccount Cr Equity:Opening-Balances
-@defaccount De Expenses:Books
-@defaccount De Expenses:Car:Gas
-@defaccount De Expenses:Charity
-@defaccount De Expenses:Clothes
-@defaccount De Expenses:Communications:Mail
-@defaccount De Expenses:Communications:Phone
-@defaccount De Expenses:Financial:Commissions
-@defaccount De Expenses:Financial:Fees
-@defaccount De Expenses:Food:Alcool
-@defaccount De Expenses:Food:Grocery
-@defaccount De Expenses:Food:Restaurant
-@defaccount De Expenses:Fun:Movie
-@defaccount De Expenses:Govt-Services USD
-@defaccount De Expenses:Home:Monthly:Condo-Fees
-@defaccount De Expenses:Home:Monthly:Loan-Interest
-@defaccount De Expenses:Insurance:Life
-@defaccount De Expenses:Medical
-@defaccount De Expenses:Sports:Gear
-@defaccount De Expenses:Taxes:US-Federal USD
-@defaccount De Expenses:Transportation:Taxi
-@defaccount Cr Income:Investments:Capital-Gains
-@defaccount Cr Income:Investments:Dividends
-@defaccount Cr Income:Investments:Interest:Checking
-@defaccount Cr Income:Investments:Interest:Savings
-@defaccount Cr Income:Salary:AcmeCo
+@defaccount De Assets:AccountsReceivable
 @defaccount Cr Liabilities:BestBank:Mortgage:Loan USD
-@defaccount Cr Liabilities:Condo-Management USD
+@defaccount Cr Liabilities:BestBank:Mortgage USD
+@defaccount Cr Liabilities:BestBank USD
 @defaccount Cr Liabilities:Credit-Card:VISA USD
+@defaccount Cr Liabilities:Credit-Card USD
+@defaccount Cr Liabilities:Condo-Management USD
+@defaccount Cr Equity:Opening-Balances
+@defaccount Cr Income:Investments:Interest:Checking
+@defaccount Cr Income:Investments:Interest
+@defaccount Cr Income:Investments
+@defaccount Cr Income:Investments:Interest:Savings
+@defaccount Cr Income:Investments:Dividends
+@defaccount Cr Income:Investments:Capital-Gains
+@defaccount Cr Income:Salary:AcmeCo
+@defaccount Cr Income:Salary
+@defaccount De Expenses:Financial:Fees
+@defaccount De Expenses:Financial
+@defaccount De Expenses:Financial:Commissions
+@defaccount De Expenses:Insurance:Life
+@defaccount De Expenses:Insurance
+@defaccount De Expenses:Food:Restaurant
+@defaccount De Expenses:Food
+@defaccount De Expenses:Food:Grocery
+@defaccount De Expenses:Food:Alcool
+@defaccount De Expenses:Communications:Phone
+@defaccount De Expenses:Communications
+@defaccount De Expenses:Communications:Mail
+@defaccount De Expenses:Transportation:Taxi
+@defaccount De Expenses:Transportation
+@defaccount De Expenses:Taxes:US-Federal USD
+@defaccount De Expenses:Taxes USD
+@defaccount De Expenses:Govt-Services USD
+@defaccount De Expenses:Clothes
+@defaccount De Expenses:Car:Gas
+@defaccount De Expenses:Car
+@defaccount De Expenses:Sports
+@defaccount De Expenses:Sports:Gear
+@defaccount De Expenses:Fun:Movie
+@defaccount De Expenses:Fun
+@defaccount De Expenses:Books
+@defaccount De Expenses:Medical
+@defaccount De Expenses:Charity
+@defaccount De Expenses:Home:Monthly:Condo-Fees
+@defaccount De Expenses:Home:Monthly
+@defaccount De Expenses:Home
+@defaccount De Expenses:Home:Monthly:Loan-Interest
 
 ;;; Transactions
 
@@ -354,40 +381,72 @@
     Assets:Current:Cash                           -440.00 CAD
     Assets:Current:Cash                            431.92 USD
 
-@check 2008-04-02 Assets:AccountsReceivable 0.00 USD
-@check 2008-04-02 Assets:Current:BestBank:Checking 3618.80 USD
-@check 2008-04-02 Assets:Current:BestBank:Savings 1411.27 USD
+@check 2008-04-02 Assets 200.00 CAD
+@check 2008-04-02 Assets 44150.85 USD
+@check 2008-04-02 Assets 0.0 AAPL
+@check 2008-04-02 Assets 100.0 EWJ
+@check 2008-04-02 Liabilities 844.74 USD
+@check 2008-04-02 Equity -200.0 CAD
+@check 2008-04-02 Equity -48559.87 USD
+@check 2008-04-02 Income -8427.33 USD
+@check 2008-04-02 Expenses 10657.61 USD
 @check 2008-04-02 Assets:Current:Cash 200.00 CAD
 @check 2008-04-02 Assets:Current:Cash -1017.67 USD
+@check 2008-04-02 Assets:Current 200.00 CAD
+@check 2008-04-02 Assets:Current 4012.40 USD
+@check 2008-04-02 Assets:Current:BestBank:Checking 3618.80 USD
+@check 2008-04-02 Assets:Current:BestBank 5030.07 USD
+@check 2008-04-02 Assets:Current:BestBank:Savings 1411.27 USD
+@check 2008-04-02 Assets:Investments:UTrade:Account 40138.45 USD
+@check 2008-04-02 Assets:Investments:UTrade 40138.45 USD
+@check 2008-04-02 Assets:Investments 40138.45 USD
 @check 2008-04-02 Assets:Investments:UTrade:Account:AAPL 0.0 AAPL
 @check 2008-04-02 Assets:Investments:UTrade:Account:EWJ 100.0 EWJ
+@check 2008-04-02 Assets:AccountsReceivable 0.00 USD
+@check 2008-04-02 Liabilities:BestBank:Mortgage:Loan 1026.06 USD
+@check 2008-04-02 Liabilities:BestBank:Mortgage 1026.06 USD
+@check 2008-04-02 Liabilities:BestBank 1026.06 USD
+@check 2008-04-02 Liabilities:Credit-Card:VISA -241.13 USD
+@check 2008-04-02 Liabilities:Credit-Card -241.13 USD
+@check 2008-04-02 Liabilities:Condo-Management 59.81 USD
 @check 2008-04-02 Equity:Opening-Balances -200.0 CAD
 @check 2008-04-02 Equity:Opening-Balances -48559.87 USD
-@check 2008-04-02 Expenses:Books 74.43 USD
-@check 2008-04-02 Expenses:Car:Gas 40.0 USD
-@check 2008-04-02 Expenses:Charity 50.0 USD
-@check 2008-04-02 Expenses:Clothes 161.22 USD
-@check 2008-04-02 Expenses:Communications:Mail 4.43 USD
-@check 2008-04-02 Expenses:Communications:Phone 121.96 USD
-@check 2008-04-02 Expenses:Financial:Commissions 29.85 USD
-@check 2008-04-02 Expenses:Financial:Fees 8.50 USD
-@check 2008-04-02 Expenses:Food:Alcool 600.00 USD
-@check 2008-04-02 Expenses:Food:Grocery 54.03 USD
-@check 2008-04-02 Expenses:Food:Restaurant 1971.73 USD
-@check 2008-04-02 Expenses:Fun:Movie 24.0 USD
-@check 2008-04-02 Expenses:Govt-Services 110.00 USD
-@check 2008-04-02 Expenses:Home:Monthly:Condo-Fees 699.08 USD
-@check 2008-04-02 Expenses:Home:Monthly:Loan-Interest 1760.70 USD
-@check 2008-04-02 Expenses:Insurance:Life 4492.44 USD
-@check 2008-04-02 Expenses:Medical 312.00 USD
-@check 2008-04-02 Expenses:Sports:Gear 89.00 USD
-@check 2008-04-02 Expenses:Taxes:US-Federal -77.76 USD
-@check 2008-04-02 Expenses:Transportation:Taxi 12.00 USD
-@check 2008-04-02 Income:Investments:Capital-Gains -228.60 USD
-@check 2008-04-02 Income:Investments:Dividends -0.68 USD
 @check 2008-04-02 Income:Investments:Interest:Checking -0.02 USD
+@check 2008-04-02 Income:Investments:Interest -198.05 USD
+@check 2008-04-02 Income:Investments -427.33 USD
 @check 2008-04-02 Income:Investments:Interest:Savings -198.03 USD
+@check 2008-04-02 Income:Investments:Dividends -0.68 USD
+@check 2008-04-02 Income:Investments:Capital-Gains -228.60 USD
 @check 2008-04-02 Income:Salary:AcmeCo -8000.00 USD
-@check 2008-04-02 Liabilities:BestBank:Mortgage:Loan 1026.06 USD
-@check 2008-04-02 Liabilities:Condo-Management 59.81 USD
-@check 2008-04-02 Liabilities:Credit-Card:VISA -241.13 USD
+@check 2008-04-02 Income:Salary -8000.00 USD
+@check 2008-04-02 Expenses:Financial:Fees 8.50 USD
+@check 2008-04-02 Expenses:Financial 38.35 USD
+@check 2008-04-02 Expenses:Financial:Commissions 29.85 USD
+@check 2008-04-02 Expenses:Insurance:Life 4492.44 USD
+@check 2008-04-02 Expenses:Insurance 4492.44 USD
+@check 2008-04-02 Expenses:Food:Restaurant 1971.73 USD
+@check 2008-04-02 Expenses:Food 2625.76 USD
+@check 2008-04-02 Expenses:Food:Grocery 54.03 USD
+@check 2008-04-02 Expenses:Food:Alcool 600.00 USD
+@check 2008-04-02 Expenses:Communications:Phone 121.96 USD
+@check 2008-04-02 Expenses:Communications 126.39 USD
+@check 2008-04-02 Expenses:Communications:Mail 4.43 USD
+@check 2008-04-02 Expenses:Transportation:Taxi 12.00 USD
+@check 2008-04-02 Expenses:Transportation 12.00 USD
+@check 2008-04-02 Expenses:Taxes:US-Federal -77.76 USD
+@check 2008-04-02 Expenses:Taxes -77.76 USD
+@check 2008-04-02 Expenses:Govt-Services 110.00 USD
+@check 2008-04-02 Expenses:Clothes 161.22 USD
+@check 2008-04-02 Expenses:Car:Gas 40.0 USD
+@check 2008-04-02 Expenses:Car 40.0 USD
+@check 2008-04-02 Expenses:Sports 209.00 USD
+@check 2008-04-02 Expenses:Sports:Gear 89.00 USD
+@check 2008-04-02 Expenses:Fun:Movie 24.0 USD
+@check 2008-04-02 Expenses:Fun 24.0 USD
+@check 2008-04-02 Expenses:Books 74.43 USD
+@check 2008-04-02 Expenses:Medical 312.00 USD
+@check 2008-04-02 Expenses:Charity 50.0 USD
+@check 2008-04-02 Expenses:Home:Monthly:Condo-Fees 699.08 USD
+@check 2008-04-02 Expenses:Home:Monthly 2459.78 USD
+@check 2008-04-02 Expenses:Home 2459.78 USD
+@check 2008-04-02 Expenses:Home:Monthly:Loan-Interest 1760.70 USD

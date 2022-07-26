@@ -198,13 +198,13 @@ class Transaction:
     def __init__(
         self, date, info, postings=None, tags=None, id=None, pending=False, edate=None
     ):
-        self.date = date
+        self.date = parse_date(date) if isinstance(date, str) else date
         self.info = info
         self.postings = postings or []
         self.tags = tags or []
         self.id = id
         self.pending = pending
-        self.edate = edate
+        self.edate = parse_date(edate) if isinstance(edate, str) else date
 
     def run(self, p):
         pending = None  # transaction balance
@@ -275,7 +275,7 @@ class Check:
     __slots__ = ("date", "name", "amount", "balance_with", "id")
 
     def __init__(self, date, name, amount, balance_with=None, id=None):
-        self.date = date
+        self.date = parse_date(date) if isinstance(date, str) else date
         self.name = name
         self.amount = amount
         self.balance_with = balance_with
@@ -333,6 +333,8 @@ class Pacioli:
             self.accounts[sub].wallet.add(amount)
 
     def add_account(self, name, atype=None, assets=None):
+        if isinstance(assets, str):
+            assets = [assets]
         for sub in tree_traverse(name):
             if not sub in self.accounts:
                 self.accounts[sub] = Account(sub, atype, assets)
@@ -502,24 +504,24 @@ class Pacioli:
             self.diff_accounts[name].wallet.sub(self.begin_accounts[name].wallet)
 
     re_account = re.compile(
-        "^@defaccount\s+(?P<atype>(De|Cr))\s+(?P<name>\S+)(\s+(?P<asset>\S+))?\s*$"
+        r"^@defaccount\s+(?P<atype>(De|Cr))\s+(?P<name>\S+)(\s+(?P<asset>\S+))?\s*$"
     )
     re_varofx = re.compile(
-        "^@var\s+ofx\s+(?P<var>\S+)\s+(?P<value>\S+)\s+(?P<name>\S+)\s*$"
+        r"^@var\s+ofx\s+(?P<var>\S+)\s+(?P<value>\S+)\s+(?P<name>\S+)\s*$"
     )
     re_check = re.compile(
-        "^@check\s+(?P<date>\d+\-\d+\-\d+)\s+(?P<name>\S+)\s+(?P<amount>[\-\+]?\d+(\.\d+)?)\s+(?P<asset>\S+)\s*$"
+        r"^@check\s+(?P<date>\d+\-\d+\-\d+)\s+(?P<name>\S+)\s+(?P<amount>[\-\+]?\d+(\.\d+)?)\s+(?P<asset>\S+)\s*$"
     )
     re_pad = re.compile(
-        "^@pad\s+(?P<date>\d+\-\d+\-\d+)\s+(?P<name>\S+)\s+(?P<name2>\S+)\s*$"
+        r"^@pad\s+(?P<date>\d+\-\d+\-\d+)\s+(?P<name>\S+)\s+(?P<name2>\S+)\s*$"
     )
     re_transaction = re.compile(
-        "^(?P<date>\d+\-\d+\-\d+)(?P<edate>\[\=\d+\-\d+\-\d+\])?\s+(?P<status>[*!])\s+(?P<description>.*)\s*$"
+        r"^(?P<date>\d+\-\d+\-\d+)(?P<edate>\[\=\d+\-\d+\-\d+\])?\s+(?P<status>[*!])\s+(?P<description>.*)\s*$"
     )
     re_posting = re.compile(
-        "^\s+(?P<name>\S+)(\s+(?P<amount>[\-\+]?\d+(\.\d+)?)\s+(?P<asset>\S+)(\s+@\s+(?P<amount2>[\-\+]?\d+(\.\d+)?)\s+(?P<asset2>\S+))?)?\s*$"
+        r"^\s+(?P<name>\S+)(\s+(?P<amount>[\-\+]?\d+(\.\d+)?)\s+(?P<asset>\S+)(\s+@\s+(?P<amount2>[\-\+]?\d+(\.\d+)?)\s+(?P<asset2>\S+))?)?\s*$"
     )
-    re_book = re.compile("^\s+\((?P<name>\S+)\)\s+BOOK\s+(?P<asset>\S+)\s*$")
+    re_book = re.compile(r"^\s+\((?P<name>\S+)\)\s+BOOK\s+(?P<asset>\S+)\s*$")
 
     def report(self):
         for name in sorted(self.accounts):
@@ -531,8 +533,7 @@ class Pacioli:
         stream = open(filename, "w") if isinstance(filename, str) else filename
         w = lambda msg, *args: stream.write(msg % args)
         stream.write(";;; Accounts\n\n")
-        for name in self.leaf_accounts:
-            acc = self.accounts[name]
+        for name, acc in self.accounts.items():
             w("@defaccount %s %s", acc.atype, name)
             if acc.assets is not None:
                 w(" " + ",".join(acc.assets))
@@ -575,8 +576,7 @@ class Pacioli:
                         w("@endtag %s\n\n", tag)
                     w("\n")
         date = self.ledger[-1].date
-        for name in self.leaf_accounts:
-            acc = self.accounts[name]
+        for name, acc in self.accounts.items():
             for asset in acc.wallet:
                 if not acc.assets or asset in acc.assets:
                     if not transactions and balance_with:
@@ -963,68 +963,6 @@ class Pacioli:
         w("\\end{document}")
 
 
-def benchmark(nt=1000):
-    accounts = list(Pacioli.MODEL.values())
-    for k in range(30):
-        accounts.append(accounts[k] + ":name" + str(k))
-    stream = io.StringIO()
-    for account in accounts:
-        stream.write("@defaccount Cr %s USD\n" % account)
-    stream.write("\n")
-    for k in range(nt):
-        stream.write("2001-01-01 * test\n")
-        value = 0.01 * random.randint(0, 1000000)
-        a = random.choice(accounts)
-        b = random.choice(accounts)
-        stream.write("    %s %s USD\n" % (a, value))
-        stream.write("    %s\n\n" % b)
-    stream = io.StringIO(stream.getvalue())
-    p = Pacioli()
-    t0 = time.time()
-    p.load(stream)
-    p.run()
-    return (time.time() - t0) / nt
-    # p.report()
-
-
-def test():
-    # from p import *
-    p = Pacioli()
-    p.add_account("Assets:Cash", "De", "USD")
-    p.ledger.append(
-        Transaction(
-            "2008-10-20",
-            "info",
-            postings=[
-                Posting("Assets:Cash", amount=Amount(100, "USD")),
-                Posting("Equity"),
-            ],
-        )
-    )
-    p.ledger.sort()
-    for item in p.ledger:
-        item.run(p)
-    # for name in sorted(p.accounts): print name, p.accounts[name]
-    assert p.accounts["Assets"].wallet["USD"] == +100
-    assert p.accounts["Equity"].wallet["USD"] == -100
-    # p.save('demo1')
-
-
-def webserver(path, port=8000):
-    import tornado.ioloop
-    import tornado.web
-
-    application = tornado.web.Application(
-        [(r"/(.*)", tornado.web.StaticFileHandler, {"path": path})]
-    )
-    application.listen(port)
-    tornado.ioloop.IOLoop.instance().start()
-
-
-def benckmark():
-    print("banchmark: %.2e sec/transaction" % benchmark())
-
-
 def main():
     USAGE = "pacioli.py <input.ledger>"
     parser = argparse.ArgumentParser(description=USAGE)
@@ -1036,47 +974,25 @@ def main():
     )
     parser.add_argument("-b", "--begin_date", default="2000-01-01", help="begin date")
     parser.add_argument("-e", "--end_date", default="2999-12-31", help="end date")
-    parser.add_argument("-o", "--output", default=None, help="save ledger")
     parser.add_argument(
         "-f",
         "--folder",
         default="{input.ledger}.output",
         help="folder where to store output",
     )
-    parser.add_argument(
-        "-B",
-        "--benchmark",
-        default=False,
-        action="store_true",
-        help="run benchmark",
-    )
-    parser.add_argument(
-        "-w",
-        "--webserver",
-        default=False,
-        dest="webserver",
-        help="port to run web server",
-    )
     args = parser.parse_args()
-    input = args.input
-    folder = args.folder.replace("{input.ledger}", input)
+    folder = args.folder.replace("{input.ledger}", args.input)
 
-    test()
-    if args.benchmark:
-        benchmark()
     p = Pacioli()
-    p.load(input)
+    p.load(args.input)
     p.begin_date = parse_date(args.begin_date)
     p.end_date = parse_date(args.end_date)
     p.run()
     p.report()
     if folder:
         p.dump_html(folder)
-        p.dump_latex(os.path.join(folder, input + ".latex"))
-        p.save(os.path.join(folder, input + ".end"))
-    if args.webserver:
-        print("open http://127.0.0.1:%s/index.html" % args.webserver)
-        webserver(folder, port=int(args.webserver))
+        p.dump_latex(os.path.join(folder, args.input + ".latex"))
+        p.save(os.path.join(folder, args.input + ".end"))
 
 
 if __name__ == "__main__":
