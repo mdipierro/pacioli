@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pacioli_erp"
+version = "0.1.0"
+description = "Double-entry accounting engine (ledger-cli compatible) with a pydal backend and an API-first ERP core."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "BSD-3-Clause" }
+authors = [{ name = "Massimo Di Pierro", email = "mdipierro@cs.depaul.edu" }]
+keywords = ["accounting", "double-entry", "ledger", "beancount", "erp", "invoicing", "inventory"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Office/Business :: Financial :: Accounting",
+]
+# The core (pacioli_erp / pacioli_erp.ledger / pacioli_erp.editor) is pure stdlib.
+dependencies = []
+
+[project.optional-dependencies]
+# database backend (pacioli_erp.storage) and ERP engine (pacioli_erp.erp)
+db = ["pydal>=20211101.1"]
+# the py4web ERP app under apps/pacioli
+web = ["py4web>=1.20230101.1"]
+dev = ["pydal>=20211101.1", "py4web>=1.20230101.1"]
+
+[project.urls]
+Homepage = "https://github.com/mdipierro/pacioli"
+
+[project.scripts]
+pacioli = "pacioli_erp.ledger:main"
+pacioli-editor = "pacioli_erp.editor:main"
+
+[tool.setuptools]
+packages = ["pacioli_erp", "pacioli_erp.tests"]
+
+[tool.setuptools.package-data]
+"pacioli_erp" = ["examples/*.ledger"]
+"pacioli_erp.tests" = ["ledger_fixtures/*.ledger"]

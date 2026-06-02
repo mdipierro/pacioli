@@ -1,0 +1,20 @@
+; harvested from ledger-cli test/baseline/cmd-balance.test (authoritative)
+2012-01-01 * Opening balances
+    Assets:A                      10.00
+    Equity:Opening balances      -10.00
+
+2012-01-02 * A to B
+    Assets:A                     -10.00
+    Assets:B                      10.00
+
+2012-01-03 * B partly to C
+    Assets:B                      -5.00
+    Assets:C                       5.00
+
+2012-01-04 * Borrow
+    Assets:A                      10.00
+    Liabilities:A                -10.00
+
+2012-01-05 * Return A
+    Assets:A                     -10.00
+    Liabilities:A                 10.00

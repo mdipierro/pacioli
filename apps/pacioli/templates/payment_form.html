@@ -1,0 +1,27 @@
+[[extend "shell.html"]]
+<form method="POST" class="erp-form">
+  <div class="form-grid">
+    <label>Direction
+      <select name="direction">
+        <option value="in">Customer pays us (in)</option>
+        <option value="out">We pay a vendor (out)</option>
+      </select>
+    </label>
+    <label>Party
+      <select name="party" required>
+        <option value="">— select —</option>
+        [[for p in parties:]]<option value="[[=p.id]]">[[=p.name]] ([[=p.kind]])</option>[[pass]]
+      </select>
+    </label>
+    <label>Amount <input type="number" step="any" name="amount" required></label>
+    <label>Cash/Bank account <input type="text" name="account" value="[[=default_account]]"></label>
+    <label>Date <input type="date" name="date" value="[[=today]]"></label>
+    <label>Reference <input type="text" name="external_id" placeholder="optional"></label>
+  </div>
+  <label>Memo <input type="text" name="memo" placeholder="optional"></label>
+  <p class="muted">Tip: to settle a specific invoice/bill, post the payment then allocate via the API.</p>
+  <p>
+    <button type="submit" class="button">Record payment</button>
+    <a class="button ghost" href="[[=URL('payments')]]">Cancel</a>
+  </p>
+</form>

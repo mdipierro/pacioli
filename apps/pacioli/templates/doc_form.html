@@ -1,0 +1,71 @@
+[[extend "shell.html"]]
+<form method="POST" class="erp-form" id="doc-form">
+  <input type="hidden" name="lines_json" id="lines_json">
+  <div class="form-grid">
+    <label>[[=('Customer' if kind=='invoice' else 'Vendor')]]
+      <select name="party" required>
+        <option value="">— select —</option>
+        [[for p in parties:]]<option value="[[=p.id]]">[[=p.name]] ([[=p.kind]])</option>[[pass]]
+      </select>
+    </label>
+    <label>Date <input type="date" name="date" value="[[=today]]"></label>
+    <label>Reference <input type="text" name="external_id" placeholder="optional"></label>
+  </div>
+  <label>Memo <input type="text" name="memo" placeholder="optional"></label>
+
+  <h3>Lines</h3>
+  <table class="lines" id="lines">
+    <thead><tr>
+      <th>Item</th><th>or Account</th><th>Description</th>
+      <th class="v">Qty</th><th class="v">Unit price</th><th class="v">Tax rate</th><th></th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <p><button type="button" class="button ghost" id="add-line"><i class="fas fa-plus"></i> Add line</button></p>
+
+  <p>
+    <button type="submit" class="button">Post [[=kind]]</button>
+    <a class="button ghost" href="[[=URL(kind + 's')]]">Cancel</a>
+  </p>
+</form>
+
+<template id="row-tpl">
+  <tr>
+    <td><select class="l-item"><option value="">—</option>
+      [[for it in items:]]<option value="[[=it.id]]">[[=it.sku]] — [[=it.name]]</option>[[pass]]
+    </select></td>
+    <td><input class="l-account" placeholder="e.g. Expenses:Misc"></td>
+    <td><input class="l-desc"></td>
+    <td class="v"><input class="l-qty" type="number" step="any" value="1"></td>
+    <td class="v"><input class="l-price" type="number" step="any" value="0"></td>
+    <td class="v"><input class="l-tax" type="number" step="any" value="0"></td>
+    <td><button type="button" class="link-del" title="remove">&times;</button></td>
+  </tr>
+</template>
+
+<script>
+const tbody = document.querySelector('#lines tbody');
+const tpl = document.getElementById('row-tpl');
+function addRow(){ tbody.appendChild(tpl.content.cloneNode(true)); }
+document.getElementById('add-line').addEventListener('click', addRow);
+tbody.addEventListener('click', e => { if(e.target.classList.contains('link-del')) e.target.closest('tr').remove(); });
+addRow();
+
+document.getElementById('doc-form').addEventListener('submit', function(e){
+  const lines = [];
+  for(const tr of tbody.querySelectorAll('tr')){
+    const item = tr.querySelector('.l-item').value;
+    const account = tr.querySelector('.l-account').value.trim();
+    const qty = tr.querySelector('.l-qty').value;
+    const price = tr.querySelector('.l-price').value;
+    const tax = tr.querySelector('.l-tax').value;
+    if(!item && !account) continue;              // skip empty rows
+    const ln = {description: tr.querySelector('.l-desc').value,
+                qty: qty || '0', unit_price: price || '0', tax_rate: tax || '0'};
+    if(item) ln.item = parseInt(item); else ln.account = account;
+    lines.push(ln);
+  }
+  if(!lines.length){ e.preventDefault(); alert('Add at least one line.'); return; }
+  document.getElementById('lines_json').value = JSON.stringify(lines);
+});
+</script>

@@ -8,28 +8,40 @@ This program is named after [Luca Pacioli](http://en.wikipedia.org/wiki/Luca_Pac
 inventor of accounting and double-entry bookkeeping. 
 Pacioli maintained that business people must insist on justice, honour, and truth.
 
-The program contains three parts:
+The program contains four parts:
 
 ### An implementation of double-entry bookkeeping 
 - Assets, Liabilities, Equity, Income, Expenses 
 - Computations of Balance Sheet and Profit/Losses
 - Automatic computation FIFO capital-gains
 - API
-- Scenario analysis (WORK IN PROGRESS)
 
-### Functions to read and write a general ledger in the [beancount format](http://furius.ca/beancount/)
-- list of accounts
-- support for ofx records
-- transactions with multiple postings
-- tags
-- checks
-- support for multiple files and partial output
+### A parser/serializer for the [ledger-cli](https://ledger-cli.org/) journal syntax
+- `YYYY/MM/DD`, `YYYY-MM-DD` and `YYYY.MM.DD` dates (and `=` effective dates)
+- transaction states `*` (cleared) and `!` (pending), `(code)` and payees
+- full line comments (`; # % | *`) and inline `;` comments
+- `:tag:` and `key: value` metadata
+- account names containing spaces (account and amount separated by 2+ spaces or a tab)
+- amounts with a commodity symbol prefix (`$1,000.00`) or suffix (`1,000.00 USD`)
+- posting costs `@` (per unit) and `@@` (total)
+- posting balance assertions (`Account  $10 = $100`)
+- virtual postings `(Account)` and `[Account]`
+- the `account`, `commodity`, `include`, `P`, `year`/`Y`, `D`, `bucket`/`A`,
+  `apply tag`/`end apply tag`, `comment`/`end comment` directives
+- Pacioli extensions: `open`/`close`, `pad`/`balance` checks, `pushtags`/`poptags`
+  and `BOOK` postings for FIFO capital gains
 
-### Reporting
-- The output of the program is in HTML
-- Reporting in Latex/PDF (can be improved)
-- Reporting in JSON (WORKM IN PROGRESS)
-- Charting
+The parser is validated against authoritative journals harvested from the
+ledger-cli test suite (see `tests/ledger_fixtures/` and `tests/test_ledger_compat.py`).
+
+### A storage abstraction (file or database)
+Pacioli can read/write the ledger from a flat file **or** a relational database
+through [pydal](https://github.com/web2py/pydal). See `pacioli_erp/storage.py`.
+
+### Reporting and editing
+- HTML reports
+- Latex/PDF reports
+- A single page web app (`pacioli_erp/editor.py`) to edit a ledger file with live validation
 
 This program uses a single file to store the input ledger.
 This is only appropriate for small bussinesses.
@@ -46,7 +58,7 @@ This program is usable but:
 
 ## Help
 
-    ./pacioli.py -h
+    python -m pacioli_erp -h
 
 ## Example
 
@@ -107,7 +119,7 @@ Consider a simple business that buys wood and sells wood toys.
 
 Run it with
        
-    ./pacioli.py -B -i toystore.ledger > toystore.balance
+    python -m pacioli_erp -i toystore.ledger > toystore.balance
 
 The output will be in toystore.ledger.output and toystore.balance
 
@@ -141,14 +153,14 @@ So why pacioli.py when we have beancount? I mostly made it for myself. I wanted 
 
 Pacioli can be used programmatically:
 
-    >>> from pacioli import *
+    >>> from pacioli_erp import *
     >>> p = Pacioli()
     >>> p.add_account('Assets:Cash','De','USD')
     >>> p.add_account('Equity','Cr','USD')
     >>> p.ledger.append(Transaction('2008-10-20','info',postings=[
     ...     Posting('Assets:Cash',amount=Amount(100,'USD')),
     ...     Posting('Equity')]))
-    >>> p.ledger.sort()
+    >>> p.finalize()
     >>> p.save('test.ledger')
     >>> p.run()
     >>> p.report()
@@ -157,19 +169,64 @@ Pacioli can be used programmatically:
     >>> assert p.accounts['Assets'].wallet['USD'] == +100
     >>> assert p.accounts['Equity'].wallet['USD'] == -100
 
-## Web server
+## Database backend (pydal)
 
-Pacioli uses Tornado to serve the genarated documents:
+The same ledger can live in a database instead of (or in addition to) a file:
 
-    ./pacioli.py -i demo.ledger -w 8080
+    pip install pydal
 
-The generated documents are just static html files therefore they can served using other server.
+    # import a file into a database
+    python -m pacioli_erp -i demo.ledger --to-db sqlite://ledger.sqlite
+
+    # run reports reading from the database
+    python -m pacioli_erp --db sqlite://ledger.sqlite
+
+Or programmatically:
+
+    >>> from pacioli_erp import storage
+    >>> db = storage.connect('sqlite://ledger.sqlite')
+    >>> storage.file_to_db('demo.ledger', db)   # file  -> db
+    >>> storage.db_to_file(db, 'out.ledger')     # db    -> file
+    >>> p = Pacioli(); p.load(storage.DBSource(db)); p.run()
+
+The DAL schema (`account`, `txn`, `posting`, `chk`, `price`) is defined in
+`pacioli_erp.storage.define_tables(...)` and is a lossless image of the file syntax.
+
+## Single page editor
+
+A dependency-free web app to edit a ledger file with live validation and a
+trial-balance preview:
+
+    python -m pacioli_erp.editor demo.ledger --port 8080
+
+(or `python -m pacioli_erp -i demo.ledger -w 8080`)
+
+## ERP core (py4web app)
+
+On top of the ledger there is an API-first **value & things** core (ledger +
+inventory + invoicing) that developers can build their own logic around (a store
+that decrements inventory, sends an invoice, records a payment). It is a py4web
+app under `apps/pacioli/`, with the py4web-independent posting engine in
+`pacioli_erp/erp.py`.
+See **[PLAN.md](PLAN.md)** for the architecture, and **[API.md](API.md)** for the
+complete REST API manual (every endpoint, request/response shapes, auth, config,
+and PDF export).
+
+    uv run --with py4web --with fpdf2 py4web run apps -A pacioli --dev   # http://127.0.0.1:8000/pacioli/
+
+## Tests
+
+    python -m unittest discover -s pacioli_erp/tests -t .
+
+The suite covers the parser, the double-entry engine, FIFO capital gains, the
+serializer round-trip, the pydal backend (skipped if pydal is absent), the web
+app, and ledger-cli compatibility against authoritative harvested journals.
 
 ## Latex
 
 Pacioli generates also a <input.ledger>.output/<input.ledger>.latex file. You can process it with
 
-    ./pacioli.py -i demo.ledger
+    python -m pacioli_erp -i demo.ledger
     cd demo.ledger.output
     pdflatex demo.ledger.latex
     open demo.ledger.pdf

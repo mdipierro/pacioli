@@ -1,0 +1,25 @@
+[[extend "shell.html"]]
+<form method="POST" class="erp-form">
+  <div class="form-grid">
+    <label>Item
+      <select name="item" required>
+        <option value="">— select —</option>
+        [[for it in items:]]<option value="[[=it.id]]">[[=it.sku]] — [[=it.name]]</option>[[pass]]
+      </select>
+    </label>
+    <label>Kind
+      <select name="kind">
+        <option value="receipt">Receipt (goods in)</option>
+        <option value="issue">Issue (goods out)</option>
+        <option value="adjust">Adjust (+/-)</option>
+      </select>
+    </label>
+    <label>Quantity <input type="number" step="any" name="qty" required></label>
+    <label>Unit cost <input type="number" step="any" name="unit_cost" placeholder="defaults to item cost"></label>
+    <label>Date <input type="date" name="date" value="[[=today]]"></label>
+  </div>
+  <p>
+    <button type="submit" class="button">Post move</button>
+    <a class="button ghost" href="[[=URL('stock')]]">Cancel</a>
+  </p>
+</form>

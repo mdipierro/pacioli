@@ -1,0 +1,10 @@
+[[extend "shell.html"]]
+[[newurl = globals().get('new_url')]]
+[[if newurl:]]
+<p><a class="button" href="[[=newurl]]"><i class="fas fa-plus"></i> [[=globals().get('new_label','New')]]</a></p>
+[[pass]]
+[[hint = globals().get('hint')]]
+[[if hint:]]<p class="muted">[[=hint]]</p>[[pass]]
+<div class="grid-wrap">
+  [[=grid.render()]]
+</div>

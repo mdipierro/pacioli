@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <base href="[[=URL('static')]]/">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pacioli ERP</title>
+    <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
+    <link rel="stylesheet" href="css/erp.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    [[block page_head]][[end]]
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <a class="brand" href="[[=URL('index')]]"><span class="dot"></span> Pacioli&nbsp;ERP</a>
+        [[include "_brand.html"]]
+        <span class="grow"></span>
+        <nav class="links">
+          [[user = globals().get('user')]]
+          [[if user:]]
+            <span><i class="fas fa-user"></i> [[=user.get('username') or user.get('email','')]]</span>
+            <a href="[[=URL('auth/profile')]]">Profile</a>
+            <a href="[[=URL('auth/logout')]]">Sign out</a>
+          [[else:]]
+            <a href="[[=URL('auth/login')]]">Sign in</a>
+            <a href="[[=URL('auth/register')]]">Sign up</a>
+          [[pass]]
+        </nav>
+      </header>
+
+      <main class="content auth-main">
+        <flash-alerts class="padded" data-alert="[[=globals().get('flash','')]]"></flash-alerts>
+        [[include]]
+      </main>
+    </div>
+    <script src="js/utils.js"></script>
+    [[block page_scripts]][[end]]
+  </body>
+</html>

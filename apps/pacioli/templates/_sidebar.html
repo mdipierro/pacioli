@@ -1,0 +1,31 @@
+[[ active = globals().get('active', '') ]]
+[[ def _cls(name): return 'nav-item active' if name == active else 'nav-item' ]]
+<nav class="sidebar" id="sidebar">
+  <div class="group">
+    <div class="title">Reports</div>
+    <a class="[[=_cls('trial_balance')]]" data-view="trial_balance" href="[[=URL('index', vars=dict(view='trial_balance'))]]"><span class="icon"><i class="fas fa-table"></i></span> Trial balance</a>
+    <a class="[[=_cls('pl')]]" data-view="pl" href="[[=URL('index', vars=dict(view='pl'))]]"><span class="icon"><i class="fas fa-chart-line"></i></span> Profit &amp; Loss</a>
+    <a class="[[=_cls('balance_sheet')]]" data-view="balance_sheet" href="[[=URL('index', vars=dict(view='balance_sheet'))]]"><span class="icon"><i class="fas fa-balance-scale"></i></span> Balance sheet</a>
+  </div>
+  <div class="group">
+    <div class="title">Catalog</div>
+    <a class="[[=_cls('stock')]]" href="[[=URL('stock')]]"><span class="icon"><i class="fas fa-boxes"></i></span> Inventory</a>
+    <a class="[[=_cls('items')]]" href="[[=URL('items')]]"><span class="icon"><i class="fas fa-tags"></i></span> Items</a>
+    <a class="[[=_cls('parties')]]" href="[[=URL('parties')]]"><span class="icon"><i class="fas fa-users"></i></span> Parties</a>
+  </div>
+  <div class="group">
+    <div class="title">Documents</div>
+    <a class="[[=_cls('invoices')]]" href="[[=URL('invoices')]]"><span class="icon"><i class="fas fa-file-invoice-dollar"></i></span> Invoices</a>
+    <a class="[[=_cls('bills')]]" href="[[=URL('bills')]]"><span class="icon"><i class="fas fa-file-invoice"></i></span> Bills</a>
+    <a class="[[=_cls('payments')]]" href="[[=URL('payments')]]"><span class="icon"><i class="fas fa-money-bill-wave"></i></span> Payments</a>
+  </div>
+  <div class="group">
+    <div class="title">System</div>
+    <a class="[[=_cls('search')]]" data-view="search" href="[[=URL('index', vars=dict(view='search'))]]"><span class="icon"><i class="fas fa-search"></i></span> Search</a>
+    <a class="[[=_cls('events')]]" href="[[=URL('events')]]"><span class="icon"><i class="fas fa-bell"></i></span> Events</a>
+  </div>
+  <div class="group">
+    <div class="title">Help</div>
+    <a class="[[=_cls('docs')]]" href="[[=URL('docs')]]"><span class="icon"><i class="fas fa-book"></i></span> Documentation</a>
+  </div>
+</nav>

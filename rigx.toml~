@@ -1,0 +1,34 @@
+[project]
+name = "pacioli"
+
+# ---------------------------------------------------------------------------
+# rigx test            -> run the whole suite
+# rigx run start       -> start the py4web ERP app (dev mode)
+# rigx run start -- -P 9000   -> forward extra flags to py4web
+# ---------------------------------------------------------------------------
+
+# Full test suite (81 tests): the ledger parser/engine, FIFO capital gains, the
+# serializer round-trip, the pydal storage backend, the ERP posting engine, the
+# py4web app end-to-end, and ledger-cli compatibility fixtures.
+#
+# Host-side (sandbox = false) because it uses `uv` to pull py4web on demand
+# (py4web bundles pydal), matching how the app itself is run; the suite also
+# writes a scratch sqlite db under apps/erp/databases.
+[targets.test]
+kind         = "test"
+sandbox      = false
+deps.nixpkgs = ["uv"]
+script       = """
+uv run --with py4web python -m unittest discover -s apps/erp/packages/pacioli_erp/pacioli_erp/tests -p 'test_*.py' -t apps/erp/packages/pacioli_erp
+"""
+
+# Start the py4web ERP app in development mode (API open, relaxed auth) at
+# http://127.0.0.1:8000/erp/ .  uv pulls py4web (and pydal) into an ephemeral
+# environment; the vendored pacioli_erp package is found via apps/erp/__init__.py.
+# Run with `rigx run start`; anything after `--` is forwarded to py4web.
+[targets.start]
+kind         = "script"
+deps.nixpkgs = ["uv"]
+script       = """
+PY4WEB_MODE=develompent uv run --with py4web py4web run apps -A erp --dev "$@"
+"""

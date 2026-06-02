@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="[[=URL('static')]]/">
+  <title>[[=globals().get('title','Docs')]] · Pacioli ERP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <button class="hamburger" id="menu-toggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <a class="brand" href="[[=URL('index')]]"><span class="dot"></span> Pacioli&nbsp;ERP</a>
+    [[include "_brand.html"]]
+    <span class="grow"></span>
+    <nav class="links">
+      [[user = globals().get('user')]]
+      [[if user:]]<span><i class="fas fa-user"></i> [[=user.get('username') or user.get('email','')]]</span>
+      <a href="[[=URL('auth/logout')]]">Sign out</a>
+      [[else:]]<a href="[[=URL('auth/login')]]">Sign in</a>[[pass]]
+    </nav>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" id="sidebar">
+      <div class="group">
+        <div class="title">Documentation</div>
+        [[for k, label in globals().get('docs', []):]]
+        <a class="nav-item[[=' active' if k == globals().get('doc_name') else '']]" href="[[=URL('docs', k)]]"><span class="icon"><i class="fas fa-book"></i></span> [[=label]]</a>
+        [[pass]]
+      </div>
+      <div class="group">
+        <div class="title">App</div>
+        <a class="nav-item" href="[[=URL('index')]]"><span class="icon"><i class="fas fa-arrow-left"></i></span> Back to app</a>
+      </div>
+    </nav>
+
+    <main class="content">
+      <div class="page-head"><h1>[[=globals().get('title','')]]</h1></div>
+      <textarea id="md-src" hidden>[[=globals().get('content','')]]</textarea>
+      <article id="md-body" class="md-body">Rendering…</article>
+    </main>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script>
+  (function(){
+    var src = document.getElementById('md-src').value;
+    var out = document.getElementById('md-body');
+    try { out.innerHTML = marked.parse(src); }
+    catch(e){ out.innerHTML = '<pre>'+String(e)+'</pre>'; }
+    var t = document.getElementById('menu-toggle');
+    if (t) t.addEventListener('click', function(){ document.getElementById('sidebar').classList.toggle('open'); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+# Business identity for documents (invoice PDF header/footer, …).
+# Edit these to match your company.  `logo` is resolved relative to the app
+# folder (apps/pacioli); leave it empty to render the header without an image.
+
+[business]
+name    = "Pacioli ERP, Inc."
+logo    = "static/media/pacioli.png"
+address = """
+123 Ledger Lane, Suite 100
+Springfield, IL 62704
+United States
+"""
+email   = "billing@example.com"
+phone   = "+1 (555) 010-2030"
+website = "https://example.com"
+tax_id  = ""                       # e.g. VAT / EIN; shown in the footer when set

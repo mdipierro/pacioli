@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="[[=URL('static')]]/">
+  <title>[[=globals().get('title','Pacioli ERP')]] · Pacioli ERP</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="css/erp.css">
+  [[block page_head]][[end]]
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <button class="hamburger" id="menu-toggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
+    <a class="brand" href="[[=URL('index')]]"><span class="dot"></span> Pacioli&nbsp;ERP</a>
+    [[include "_brand.html"]]
+    <span class="grow"></span>
+    <nav class="links">
+      [[user = globals().get('user')]]
+      [[if user:]]<span><i class="fas fa-user"></i> [[=user.get('username') or user.get('email','')]]</span>
+      <a href="[[=URL('auth/logout')]]">Sign out</a>
+      [[else:]]<a href="[[=URL('auth/login')]]">Sign in</a>[[pass]]
+      <a href="[[=URL('tokens')]]">API tokens</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    [[include "_sidebar.html"]]
+    <main class="content">
+      <div class="page-head">
+        <h1>[[=globals().get('title','')]]</h1>
+        [[sub = globals().get('subtitle','')]]
+        [[if sub:]]<div class="muted">[[=sub]]</div>[[pass]]
+      </div>
+      <flash-alerts class="padded" data-alert="[[=globals().get('flash','')]]"></flash-alerts>
+      [[include]]
+    </main>
+  </div>
+</div>
+<script src="js/utils.js"></script>
+<script>
+  var t = document.getElementById('menu-toggle');
+  if (t) t.addEventListener('click', function(){ document.getElementById('sidebar').classList.toggle('open'); });
+</script>
+[[block page_scripts]][[end]]
+</body>
+</html>

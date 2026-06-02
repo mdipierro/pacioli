@@ -1,0 +1,10 @@
+[[
+# Business name from config.toml (apps/pacioli/config.toml), shown next to the
+# "Pacioli ERP" brand in every page header.  Read here so it stays in one place.
+try:
+    from apps.pacioli import invoice_pdf
+    _bn = (invoice_pdf.load_business().get('name') or '').strip()
+except Exception:
+    _bn = ''
+pass
+]][[if _bn:]]<span class="biz-name">[[=_bn]]</span>[[pass]]

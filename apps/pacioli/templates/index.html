@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <base href="[[=URL('static')]]/">
+  <title>Pacioli ERP</title>
+  <link rel="stylesheet" href="css/no.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="css/erp.css">
+</head>
+<body>
+
+<!-- Vue 3 single-page back office.  The shell (topbar + sidebar + content) is a
+     Vue app; report/search views are switched in place, while catalog/document
+     pages are real links to the server-rendered py4web Grids.  Server-side data
+     (auth state, URLs) is injected once via CONFIG below; everything else is
+     reactive Vue state. -->
+<div id="app" class="app" v-cloak>
+
+  <header class="topbar">
+    <button class="hamburger" aria-label="Menu" @click="sidebarOpen = !sidebarOpen"><i class="fas fa-bars"></i></button>
+    <span class="brand"><span class="dot"></span> Pacioli&nbsp;ERP</span>
+    [[include "_brand.html"]]
+    <span class="badge" :class="{open: !cfg.requireAuth}">{{ cfg.requireAuth ? 'secured' : 'dev' }}</span>
+    <span class="grow"></span>
+    <nav class="links">
+      <span v-if="cfg.authed"><i class="fas fa-user"></i> {{ cfg.username }}</span>
+      <a v-if="cfg.authed" :href="cfg.urls.logout">Sign out</a>
+      <a v-else :href="cfg.urls.login">Sign in</a>
+      <a :href="cfg.urls.tokens">API tokens</a>
+      <a :href="cfg.urls.health" target="_blank">Health</a>
+    </nav>
+  </header>
+
+  <div class="layout">
+    <nav class="sidebar" :class="{open: sidebarOpen}">
+      <div class="group">
+        <div class="title">Reports</div>
+        <a v-for="r in reportNav" :key="r.view" class="nav-item" :class="{active: view === r.view}"
+           :href="cfg.urls.index + '?view=' + r.view" @click.prevent="nav(r.view)">
+          <span class="icon"><i :class="r.icon"></i></span> {{ r.label }}
+        </a>
+      </div>
+      <div class="group">
+        <div class="title">Catalog</div>
+        <a class="nav-item" :href="cfg.urls.stock"><span class="icon"><i class="fas fa-boxes"></i></span> Inventory</a>
+        <a class="nav-item" :href="cfg.urls.items"><span class="icon"><i class="fas fa-tags"></i></span> Items</a>
+        <a class="nav-item" :href="cfg.urls.parties"><span class="icon"><i class="fas fa-users"></i></span> Parties</a>
+      </div>
+      <div class="group">
+        <div class="title">Documents</div>
+        <a class="nav-item" :href="cfg.urls.invoices"><span class="icon"><i class="fas fa-file-invoice-dollar"></i></span> Invoices</a>
+        <a class="nav-item" :href="cfg.urls.bills"><span class="icon"><i class="fas fa-file-invoice"></i></span> Bills</a>
+        <a class="nav-item" :href="cfg.urls.payments"><span class="icon"><i class="fas fa-money-bill-wave"></i></span> Payments</a>
+      </div>
+      <div class="group">
+        <div class="title">System</div>
+        <a class="nav-item" :class="{active: view === 'search'}" :href="cfg.urls.index + '?view=search'"
+           @click.prevent="nav('search')"><span class="icon"><i class="fas fa-search"></i></span> Search</a>
+        <a class="nav-item" :href="cfg.urls.events"><span class="icon"><i class="fas fa-bell"></i></span> Events</a>
+      </div>
+      <div class="group">
+        <div class="title">Help</div>
+        <a class="nav-item" :href="cfg.urls.docs"><span class="icon"><i class="fas fa-book"></i></span> Documentation</a>
+      </div>
+    </nav>
+
+    <main class="content">
+      <div class="page-head">
+        <h1>{{ title }}</h1>
+        <div class="muted">Value &amp; things core — ledger · inventory · invoicing — over a REST API. Full reference in <code>PLAN.md</code>.</div>
+      </div>
+
+      <!-- gate: only the home page is public -->
+      <div v-if="!cfg.authed && view !== 'home'" class="welcome">
+        <h2>Sign in required</h2>
+        <p class="muted">Please sign in to view this page.</p>
+        <p><a class="button" :href="cfg.urls.login">Sign in</a></p>
+      </div>
+
+      <!-- public home / landing -->
+      <div v-else-if="view === 'home'" class="welcome">
+        <img class="hero-logo" src="media/pacioli.png" alt="Pacioli ERP">
+        <h2>Pacioli ERP</h2>
+        <blockquote>An API-first, plain-text-auditable <strong>financial + inventory core</strong>.
+          It owns <em>money and things</em> (ledger, inventory, invoicing). It deliberately does
+          <strong>not</strong> own <em>people</em> (CRM, HR, payroll, the storefront).
+          Developers build their own logic around the API.</blockquote>
+        <p v-if="cfg.authed" class="muted">Pick a report or section from the menu.</p>
+        <p v-else><a class="button" :href="cfg.urls.login">Sign in to continue</a></p>
+      </div>
+
+      <!-- search -->
+      <div v-else-if="view === 'search'">
+        <form class="search-form" @submit.prevent="runSearch">
+          <select v-model="sTable">
+            <option value="item">Items</option><option value="party">Parties</option>
+            <option value="account">Accounts</option><option value="location">Locations</option>
+            <option value="document">Documents</option>
+          </select>
+          <input v-model="sQ" placeholder="name / sku / identifier">
+          <input v-model="sTags" placeholder="tags, comma-separated">
+          <select v-model="sMode"><option value="and">all tags</option><option value="or">any tag</option></select>
+          <button>Search</button>
+        </form>
+        <div v-if="searchMsg" class="muted">{{ searchMsg }}</div>
+        <div v-else v-html="searchHtml"></div>
+      </div>
+
+      <!-- table/report views (HTML built by the formatting helpers, shown via v-html) -->
+      <div v-else-if="loading" class="muted">loading…</div>
+      <pre v-else-if="error">{{ error }}</pre>
+      <div v-else v-html="bodyHtml" @click="onContentClick"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+// --- server-injected configuration (rendered once by renoir) ---------------
+const CONFIG = {
+  apiBase: "[[=api_base]]",
+  authed: [[='true' if user else 'false']],
+  requireAuth: [[='true' if require_auth else 'false']],
+  username: "[[=(user.get('username') or user.get('email','')) if user else '']]",
+  urls: {
+    index:    "[[=URL('index')]]",
+    docs:     "[[=URL('docs')]]",
+    login:    "[[=URL('auth/login')]]",
+    logout:   "[[=URL('auth/logout')]]",
+    tokens:   "[[=URL('tokens')]]",
+    health:   "[[=URL('api/health')]]",
+    stock:    "[[=URL('stock')]]",
+    items:    "[[=URL('items')]]",
+    parties:  "[[=URL('parties')]]",
+    invoices: "[[=URL('invoices')]]",
+    bills:    "[[=URL('bills')]]",
+    payments: "[[=URL('payments')]]",
+    events:   "[[=URL('events')]]",
+  },
+};
+</script>
+<script src="js/vue.global.prod.js"></script>
+<script>
+const { createApp } = Vue;
+
+// --- formatting + table helpers (pure; return HTML strings for v-html) ------
+function num(v){ const n = parseFloat(v); return (n<0?'('+Math.abs(n).toFixed(2)+')':n.toFixed(2)); }
+function amts(a){ return a.map(x => num(x.value) + ' ' + (x.commodity||'')).join(', '); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+function tagchips(tags){ return (tags||[]).map(t => '<span class="tag">'+esc(t)+'</span>').join(''); }
+
+async function get(path){
+  const r = await fetch(CONFIG.apiBase + path, {headers: {'Accept': 'application/json'}, credentials: 'same-origin'});
+  if(!r.ok){
+    let msg = r.status + ' ' + r.statusText;
+    try { msg = (await r.json()).error || msg; } catch(e) {}
+    throw new Error(msg);
+  }
+  return r.json();
+}
+
+// C(label, accessor, cssClass) -> column descriptor
+function C(label, fn, cls){ return {label: label, fn: fn, cls: cls || ''}; }
+function isVcol(cls){ return cls.split(/\s+/).indexOf('v') !== -1; }
+function negCls(content){ return /\(|(^|[\s,])-/.test(String(content)) ? ' neg' : ''; }
+
+function rows(list, cols){
+  if(!list || !list.length) return '<p class="muted">Nothing to show yet.</p>';
+  const head = '<thead><tr>' + cols.map(c => '<th class="'+c.cls+'">'+c.label+'</th>').join('') + '</tr></thead>';
+  let body = '';
+  for(const item of list){
+    body += '<tr>' + cols.map(c => {
+      const cell = c.fn(item) ?? '';
+      const cls = c.cls + (isVcol(c.cls) ? negCls(cell) : '');
+      return '<td class="'+cls+'">'+cell+'</td>';
+    }).join('') + '</tr>';
+  }
+  return '<table>' + head + '<tbody>' + body + '</tbody></table>';
+}
+
+// ---- collapsible account tree (trial balance, balance sheet) ----
+// Account names are colon-paths ("Assets:Inventory:BOLT-M6"); build a tree and
+// show only the top level by default, with ▶/▼ toggles to drill down.
+let _twSeq = 0;
+function buildTree(list){
+  const root = {children: {}, order: []};
+  for(const item of list || []){
+    const parts = String(item.account).split(':');
+    let node = root, path = '';
+    parts.forEach(seg => {
+      path = path ? path + ':' + seg : seg;
+      if(!node.children[seg]){ node.children[seg] = {name: seg, path: path, children: {}, order: [], amounts: null}; node.order.push(seg); }
+      node = node.children[seg];
+    });
+    node.amounts = item.amounts;
+  }
+  return root;
+}
+// effective amounts for a node: its own if present, else the sum of its
+// children's (so every level shows a rollup total, even when the API only
+// returns leaf/sub-accounts as for the balance sheet).
+function nodeAmounts(node){
+  if(node._amt) return node._amt;
+  if(node.amounts){ node._amt = node.amounts; return node._amt; }
+  const acc = {};
+  for(const k of node.order){
+    for(const a of (nodeAmounts(node.children[k]) || [])){
+      acc[a.commodity] = (acc[a.commodity] || 0) + parseFloat(a.value);
+    }
+  }
+  node._amt = Object.keys(acc).map(c => ({commodity: c, value: String(acc[c])}));
+  return node._amt;
+}
+function treeTable(list, valueLabel){
+  if(!list || !list.length) return '<p class="muted">Nothing to show yet.</p>';
+  const root = buildTree(list);
+  let body = '';
+  (function walk(node, depth, parentId){
+    for(const key of node.order){
+      const c = node.children[key];
+      const id = ++_twSeq;
+      const tog = c.order.length ? '<span class="tw" data-id="'+id+'">▶</span>' : '<span class="tw-leaf"></span>';
+      const amtsArr = nodeAmounts(c);
+      const val = (amtsArr && amtsArr.length) ? amts(amtsArr) : '';
+      body += '<tr class="trow'+(depth>0?' hidden':'')+'" data-id="'+id+'" data-parent="'+parentId+'">'
+        + '<td class="acct-cell" style="padding-left:'+(10+depth*20)+'px">'+tog+'<span class="acct">'+esc(c.name)+'</span></td>'
+        + '<td class="v'+negCls(val)+'">'+val+'</td></tr>';
+      walk(c, depth+1, id);
+    }
+  })(root, 0, 0);
+  return '<table class="tree"><thead><tr><th>Account</th><th class="v">'+(valueLabel||'Balance')+'</th></tr></thead><tbody>'+body+'</tbody></table>';
+}
+function twToggle(id){
+  const tw = document.querySelector('.tw[data-id="'+id+'"]');
+  if(!tw) return;
+  const open = tw.classList.toggle('open');
+  tw.textContent = open ? '▼' : '▶';
+  if(open){
+    document.querySelectorAll('.trow[data-parent="'+id+'"]').forEach(r => r.classList.remove('hidden'));
+  } else {
+    (function hide(pid){
+      document.querySelectorAll('.trow[data-parent="'+pid+'"]').forEach(r => {
+        r.classList.add('hidden');
+        const ctw = r.querySelector('.tw');
+        if(ctw){ ctw.classList.remove('open'); ctw.textContent = '▶'; }
+        hide(r.dataset.id);
+      });
+    })(id);
+  }
+}
+
+// --- data loaders: view -> HTML string -------------------------------------
+const LOADERS = {
+  async trial_balance(){
+    const d = await get('/reports/trial_balance');
+    return treeTable(d.trial_balance, 'Balance');
+  },
+  async pl(){
+    const d = await get('/reports/profit_and_loss');
+    const card = (k, v) => '<div class="card"><div class="k">'+k+'</div><div class="val'+(parseFloat(v)<0?' neg':'')+'">'+num(v)+'</div></div>';
+    let h = '<div class="cards">' + card('Income', d.total_income) + card('Expenses', d.total_expenses) + card('Net profit', d.net) + '</div>';
+    h += '<h3>Income</h3>' + rows(d.income, [C('Account', x=>x.account), C('Amount', x=>amts(x.amounts), 'v')]);
+    h += '<h3>Expenses</h3>' + rows(d.expenses, [C('Account', x=>x.account), C('Amount', x=>amts(x.amounts), 'v')]);
+    return h;
+  },
+  async balance_sheet(){
+    const d = await get('/reports/balance_sheet');
+    let h = '';
+    for(const k of ['assets','liabilities','equity']){
+      h += '<h3>'+k+'</h3>' + treeTable(d[k], 'Amount');
+    }
+    return h;
+  },
+  async stock(){
+    const d = await get('/stock');
+    return rows(d.stock, [
+      C('SKU', x=>x.sku), C('Name', x=>x.name), C('Qty', x=>x.qty, 'v'),
+      C('Unit cost', x=>num(x.cost), 'v'), C('Value', x=>num(x.value), 'v'),
+    ]);
+  },
+  async items(){
+    const d = await get('/items');
+    return rows(d.items, [
+      C('SKU', x=>x.sku), C('Name', x=>x.name),
+      C('Tracked', x=>x.tracked ? 'yes' : 'no'),
+      C('Cost', x=>num(x.cost), 'v'), C('Price', x=>num(x.price), 'v'),
+      C('Tags', x=>tagchips(x.tags)),
+    ]);
+  },
+  async parties(){
+    const d = await get('/parties');
+    return rows(d.parties, [
+      C('Name', x=>x.name), C('Kind', x=>x.kind),
+      C('Receivable a/c', x=>'<span class="acct">'+x.ar_account+'</span>'),
+      C('Tags', x=>tagchips(x.tags)),
+    ]);
+  },
+  async invoices(){
+    const d = await get('/invoices');
+    return rows(d.invoices, [
+      C('#', x=>x.id), C('Date', x=>x.date), C('Party', x=>esc(x.party_name||'')),
+      C('Total', x=>num(x.total), 'v'), C('Allocated', x=>num(x.allocated), 'v'),
+      C('Status', x=>x.status),
+      C('', x=>'<a class="pdf-link" href="'+CONFIG.apiBase+'/invoices/'+x.id+'/pdf"><i class="fas fa-file-pdf"></i> PDF</a>'),
+    ]);
+  },
+  async bills(){
+    const d = await get('/bills');
+    return rows(d.bills, [
+      C('#', x=>x.id), C('Date', x=>x.date), C('Total', x=>num(x.total), 'v'),
+      C('Allocated', x=>num(x.allocated), 'v'), C('Status', x=>x.status),
+    ]);
+  },
+  async payments(){
+    const d = await get('/payments');
+    return rows(d.payments, [
+      C('#', x=>x.id), C('Date', x=>x.date), C('Party', x=>x.party),
+      C('Amount', x=>num(x.total), 'v'), C('Status', x=>x.status),
+    ]);
+  },
+  async events(){
+    const d = await get('/events');
+    return rows(d.events, [
+      C('#', x=>x.id), C('Kind', x=>x.kind),
+      C('Payload', x=>'<code>'+esc(JSON.stringify(x.payload))+'</code>'), C('When', x=>x.created_on),
+    ]);
+  },
+};
+
+const TITLES = {
+  home: 'Pacioli ERP',
+  trial_balance: 'Trial balance', pl: 'Profit & Loss', balance_sheet: 'Balance sheet',
+  stock: 'Inventory', items: 'Items', parties: 'Parties',
+  invoices: 'Invoices', bills: 'Bills', payments: 'Payments',
+  search: 'Search', events: 'Events',
+};
+
+createApp({
+  data(){
+    return {
+      cfg: CONFIG,
+      view: 'home',
+      title: TITLES.home,
+      loading: false,
+      error: null,
+      bodyHtml: '',
+      sidebarOpen: false,
+      reportNav: [
+        {view: 'trial_balance', label: 'Trial balance', icon: 'fas fa-table'},
+        {view: 'pl',            label: 'Profit & Loss', icon: 'fas fa-chart-line'},
+        {view: 'balance_sheet', label: 'Balance sheet', icon: 'fas fa-balance-scale'},
+      ],
+      // search form
+      sTable: 'item', sQ: '', sTags: '', sMode: 'and',
+      searchHtml: '', searchMsg: 'Search by text identifier and/or tags.',
+    };
+  },
+  methods: {
+    async nav(view){
+      this.view = view;
+      this.title = TITLES[view] || view;
+      if (window.innerWidth <= 760) this.sidebarOpen = false;
+      await this.load();
+    },
+    async load(){
+      this.error = null;
+      // home/search render from templates; nothing to fetch.  Unauthenticated
+      // users only ever see the home/login-prompt branch, so never fetch.
+      if(this.view === 'home' || this.view === 'search' || !this.cfg.authed){
+        this.bodyHtml = ''; this.loading = false; return;
+      }
+      const loader = LOADERS[this.view];
+      if(!loader){ this.bodyHtml = ''; return; }
+      this.loading = true;
+      try { this.bodyHtml = await loader(); }
+      catch(e){ this.error = String(e.message || e); }
+      finally { this.loading = false; }
+    },
+    onContentClick(e){
+      const tw = e.target.closest('.tw');
+      if(tw) twToggle(tw.dataset.id);
+    },
+    async runSearch(){
+      const tags = this.sTags.split(',').map(s => s.trim()).filter(Boolean);
+      const params = new URLSearchParams();
+      if(this.sQ.trim()) params.set('q', this.sQ.trim());
+      tags.forEach(t => params.append('tag', t));
+      params.set('mode', this.sMode);
+      this.searchHtml = ''; this.searchMsg = 'searching…';
+      try {
+        const d = await get('/search/' + this.sTable + '?' + params.toString());
+        this.searchHtml = rows(d.results, [
+          C('ID', x=>x.id, 'v'), C('Identifier', x=>esc(x.label ?? '')), C('Tags', x=>tagchips(x.tags)),
+        ]);
+        this.searchMsg = '';
+      } catch(e){ this.searchHtml = '<pre>'+esc(String(e.message || e))+'</pre>'; this.searchMsg = ''; }
+    },
+  },
+  mounted(){
+    const requested = new URLSearchParams(location.search).get('view');
+    const known = v => v === 'home' || v === 'search' || !!LOADERS[v];
+    const start = (requested && known(requested)) ? requested : (this.cfg.authed ? 'trial_balance' : 'home');
+    this.nav(start);
+  },
+}).mount('#app');
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "parties": [
+    {"name": "Globex Corporation", "kind": "customer", "tags": ["enterprise"], "email": "ap@globex.example", "phone": "+1 (555) 200-1000", "address": "500 Corporate Plaza\nSuite 1200\nNew York, NY 10001\nUnited States"},
+    {"name": "Initech LLC",        "kind": "customer", "tags": ["smb"], "email": "billing@initech.example", "phone": "+1 (555) 200-2000", "address": "742 Office Park Dr\nAustin, TX 78701\nUnited States"},
+    {"name": "Wonka Retail",       "kind": "customer", "email": "accounts@wonka.example", "phone": "+1 (555) 200-3000", "address": "1 Chocolate Factory Way\nGreat Glass Bldg\nPortland, OR 97201\nUnited States"},
+    {"name": "Acme Supplies",      "kind": "vendor",   "tags": ["hardware"], "email": "sales@acme.example", "phone": "+1 (555) 300-1000", "address": "88 Industrial Rd\nNewark, NJ 07102\nUnited States"},
+    {"name": "Stark Components",    "kind": "vendor",   "tags": ["electronics"], "email": "orders@stark.example", "phone": "+1 (555) 300-2000", "address": "10880 Malibu Point\nMalibu, CA 90265\nUnited States"}
+  ],
+  "items": [
+    {"sku": "WIDGET-STD",  "name": "Standard Widget",      "cost": "4.00",  "price": "9.99",  "tracked": true,  "tags": ["hardware"]},
+    {"sku": "WIDGET-PRO",  "name": "Pro Widget",           "cost": "7.50",  "price": "19.99", "tracked": true,  "tags": ["hardware", "premium"]},
+    {"sku": "GADGET-A",    "name": "Gadget Model A",        "cost": "12.00", "price": "29.95", "tracked": true,  "tags": ["electronics"]},
+    {"sku": "CABLE-USB-C", "name": "USB-C Cable 1m",        "cost": "1.20",  "price": "6.50",  "tracked": true,  "tags": ["accessories"]},
+    {"sku": "BOLT-M6",     "name": "M6 Bolt (pack of 100)", "cost": "3.00",  "price": "8.00",  "tracked": true,  "tags": ["fasteners"]},
+    {"sku": "SUPPORT-HR",  "name": "Support (per hour)",    "cost": "0.00",  "price": "120.00","tracked": false, "tags": ["service"]}
+  ],
+  "bills": [
+    {"vendor": "Acme Supplies",   "external_id": "seed-bill-1", "lines": [
+      {"item": "WIDGET-STD", "qty": "200", "unit_price": "4.00"},
+      {"item": "WIDGET-PRO", "qty": "80",  "unit_price": "7.50"},
+      {"item": "BOLT-M6",    "qty": "150", "unit_price": "3.00"}
+    ]},
+    {"vendor": "Stark Components", "external_id": "seed-bill-2", "lines": [
+      {"item": "GADGET-A",    "qty": "60",  "unit_price": "12.00"},
+      {"item": "CABLE-USB-C", "qty": "500", "unit_price": "1.20"}
+    ]}
+  ]
+}

@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+sql.log
+*.sqlite
+*.table
+databases/
+apps/*/databases/*.db
+apps/*/databases/*.table
+apps/*/sessions/
+apps/.service/
+password.txt
+build/
+dist/
+*.egg-info/
+output/
